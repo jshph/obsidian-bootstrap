@@ -1,6 +1,6 @@
-# Getting Started with Your New Vault
+# Getting Started with Your Migrated Vault
 
-Welcome to your personal knowledge management system! This vault has been configured with a proven workflow for capturing, organizing, and connecting your thoughts.
+This vault has been updated with the latest configuration from https://github.com/jshph/.obsidian (updated: Sep 15, 2025). Welcome to your personal knowledge management system configured with a proven workflow for capturing, organizing, and connecting your thoughts.
 
 ## 📁 Folder Structure
 

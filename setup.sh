@@ -1,65 +1,75 @@
 #!/bin/bash
 
-# Obsidian Vault Bootstrap MCP Server Setup Script
+# Obsidian Bootstrap MCP Server Setup Script
+# Automatically installs the obsidian-bootstrap MCP server to Claude Code
 
-echo "🎯 Setting up Obsidian Vault Bootstrap MCP Server..."
+set -e
 
-# Check if bun is installed
-if ! command -v bun &> /dev/null; then
-    echo "❌ Bun is not installed. Please install it first:"
-    echo "   curl -fsSL https://bun.sh/install | bash"
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo "🚀 Obsidian Bootstrap MCP Server Setup"
+echo "======================================"
+echo ""
+
+# Configuration
+BINARY_URL="https://raw.githubusercontent.com/jshph/bootstrap-vault/main/dist/obsidian-bootstrap"
+INSTALL_DIR="$HOME/.claude/mcp-servers/obsidian-bootstrap"
+BINARY_NAME="obsidian-bootstrap"
+
+# Check if claude CLI is installed
+if ! command -v claude &> /dev/null; then
+    echo -e "${RED}❌ Claude CLI is not installed or not in PATH${NC}"
+    echo "Please install Claude Code first: https://claude.ai/download"
     exit 1
 fi
 
-# Install dependencies
-echo "📦 Installing dependencies..."
-bun install
+echo "📦 Installing Obsidian Bootstrap MCP Server..."
 
-# Check if claude CLI is installed
-if command -v claude &> /dev/null; then
-    echo "✅ Claude CLI detected"
-    
-    # Ask user for installation scope
-    echo ""
-    echo "How would you like to install the MCP server?"
-    echo "1) Project scope (shareable with team)"
-    echo "2) User scope (personal use only)"
-    echo "3) Skip Claude setup (manual configuration)"
-    read -p "Choose option (1-3): " choice
-    
-    case $choice in
-        1)
-            echo "📝 Adding MCP server to project scope..."
-            claude mcp add obsidian-bootstrap --scope project "bun run $(pwd)/src/index.ts"
-            echo "✅ Added to project .mcp.json"
-            ;;
-        2)
-            echo "👤 Adding MCP server to user scope..."
-            claude mcp add obsidian-bootstrap --scope user "bun run $(pwd)/src/index.ts"
-            echo "✅ Added to user configuration"
-            ;;
-        3)
-            echo "⚠️  Manual setup required. Add this to your .mcp.json:"
-            echo ""
-            cat .mcp.json
-            echo ""
-            ;;
-    esac
+# Create installation directory
+mkdir -p "$INSTALL_DIR"
+
+# Download the prebuilt binary
+echo "⬇️  Downloading prebuilt binary..."
+if command -v curl &> /dev/null; then
+    curl -L -o "$INSTALL_DIR/$BINARY_NAME" "$BINARY_URL"
+elif command -v wget &> /dev/null; then
+    wget -O "$INSTALL_DIR/$BINARY_NAME" "$BINARY_URL"
 else
-    echo "⚠️  Claude CLI not found. Creating .mcp.json for manual configuration..."
-    echo ""
-    echo "Add this MCP server to Claude Desktop by:"
-    echo "1. Creating .mcp.json in your project root"
-    echo "2. Or running: claude mcp add obsidian-bootstrap --scope project \"bun run $(pwd)/src/index.ts\""
+    echo -e "${RED}❌ Neither curl nor wget is installed${NC}"
+    exit 1
 fi
 
+# Make binary executable
+chmod +x "$INSTALL_DIR/$BINARY_NAME"
+
+echo -e "${GREEN}✅ Binary downloaded and installed${NC}"
+
+# Add to Claude Code MCP servers
 echo ""
-echo "✅ Setup complete!"
-echo ""
-echo "📚 To use the MCP server in Claude Desktop:"
-echo "   Type: 'Use the bootstrap_vault prompt to create a new Obsidian vault'"
-echo ""
-echo "🧪 To test locally:"
-echo "   Run: bun run src/index.ts"
-echo ""
-echo "Happy note-taking! 🚀"
+echo "📝 Registering with Claude Code..."
+
+# Use claude mcp add command
+claude mcp add obsidian-bootstrap --scope user "$INSTALL_DIR/$BINARY_NAME"
+
+if [ $? -eq 0 ]; then
+    echo -e "${GREEN}✅ Successfully installed and registered obsidian-bootstrap MCP server!${NC}"
+    echo ""
+    echo "🎉 Installation complete!"
+    echo ""
+    echo "Usage:"
+    echo "  Direct CLI: claude --prompt obsidian-bootstrap:bootstrap_vault"
+    echo "  With location: claude --prompt obsidian-bootstrap:bootstrap_vault location=\"~/MyVault\""
+    echo "  With custom repo: claude --prompt obsidian-bootstrap:bootstrap_vault github_repo=\"https://github.com/your/config\""
+    echo ""
+    echo "Or ask Claude to:"
+    echo "  'Create a PKM vault in ~/Documents'"
+    echo "  'Help me migrate from https://github.com/kepano/obsidian-minimal'"
+else
+    echo -e "${YELLOW}⚠️  Failed to register with Claude Code${NC}"
+    echo "You can manually add it to your Claude config with:"
+    echo "  claude mcp add obsidian-bootstrap --scope user \"$INSTALL_DIR/$BINARY_NAME\""
+fi

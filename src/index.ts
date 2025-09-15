@@ -109,24 +109,31 @@ cat ./temp-obsidian-analysis/.obsidian/community-plugins.json
 \`\`\`
 
 ### 2. Create New Vault
+
+**IMPORTANT: FIRST check if the vault already exists before doing anything:**
+
 \`\`\`bash
-# Check if vault directory already exists
+# ⚠️ CRITICAL: Check if vault directory already exists FIRST
 if [ -d "${location}/[VAULT_NAME]" ]; then
-    echo "⚠️ Vault directory already exists at ${location}/[VAULT_NAME]"
+    echo "⚠️ STOP! Vault directory already exists at ${location}/[VAULT_NAME]"
     echo "It contains:"
     ls -la ${location}/[VAULT_NAME]/
 
     # Check for existing .obsidian folder
     if [ -d "${location}/[VAULT_NAME]/.obsidian" ]; then
         echo "🔍 Found existing .obsidian configuration"
-        echo "Please confirm what to migrate:"
+        echo "ASK USER before proceeding:"
         echo "1. Merge configs (keep existing, add new plugins)"
         echo "2. Replace configs (backup existing, use new)"
         echo "3. Skip config migration (only copy templates/folders)"
-        # User should decide before proceeding
+        echo "4. Cancel - do nothing"
+        # STOP HERE and wait for user decision
+        # DO NOT proceed without user confirmation
     fi
+    # DO NOT automatically copy anything to existing vaults!
 else
-    # Fresh vault - create everything
+    # Fresh vault - safe to create everything
+    echo "Creating new vault at ${location}/[VAULT_NAME]"
     mkdir -p ${location}/[VAULT_NAME]
 
     # Create folder structure based on OBSIDIAN.md guidance (if found)
@@ -273,24 +280,31 @@ cat ./temp-obsidian-analysis/.obsidian/community-plugins.json
 \`\`\`
 
 ### 2. Create New Vault
+
+**IMPORTANT: FIRST check if the vault already exists before doing anything:**
+
 \`\`\`bash
-# Check if vault directory already exists
+# ⚠️ CRITICAL: Check if vault directory already exists FIRST
 if [ -d "[NEW_VAULT_PATH]" ]; then
-    echo "⚠️ Vault directory already exists at [NEW_VAULT_PATH]"
+    echo "⚠️ STOP! Vault directory already exists at [NEW_VAULT_PATH]"
     echo "It contains:"
     ls -la [NEW_VAULT_PATH]/
 
     # Check for existing .obsidian folder
     if [ -d "[NEW_VAULT_PATH]/.obsidian" ]; then
         echo "🔍 Found existing .obsidian configuration"
-        echo "Please confirm what to migrate:"
+        echo "ASK USER before proceeding:"
         echo "1. Merge configs (keep existing, add new plugins)"
         echo "2. Replace configs (backup existing, use new)"
         echo "3. Skip config migration (only copy templates/folders)"
-        # User should decide before proceeding
+        echo "4. Cancel - do nothing"
+        # STOP HERE and wait for user decision
+        # DO NOT proceed without user confirmation
     fi
+    # DO NOT automatically copy anything to existing vaults!
 else
-    # Fresh vault - create everything
+    # Fresh vault - safe to create everything
+    echo "Creating new vault at [NEW_VAULT_PATH]"
     mkdir -p [NEW_VAULT_PATH]
 
     # Create folder structure based on OBSIDIAN.md guidance (if found)

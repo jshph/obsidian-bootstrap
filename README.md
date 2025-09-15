@@ -7,11 +7,29 @@ An MCP (Model Context Protocol) server that exposes a single prompt to help you 
 - Prompts-only: One prompt `bootstrap_vault`; no MCP tools
 - Transparent: Uses `mkdir`, `cat`, `cp`, and `git clone`
 - Template presets: minimal, para, pkm, zettelkasten (folder lists only)
-- Migration helper: Analyze a repo’s `.obsidian` and copy configs
+- Migration helper: Analyze a repo's `.obsidian` and copy configs
 
-## Install
+## Installation
 
-### Pre-built binary
+### Quick Install (Recommended)
+
+Run this one-liner to automatically install the obsidian-bootstrap MCP server:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/jshph/bootstrap-vault/main/setup.sh | bash
+```
+
+This will:
+- Download the prebuilt binary
+- Install it to `~/.claude/mcp-servers/obsidian-bootstrap`
+- Register it with Claude Code automatically
+
+### Manual Installation
+
+<details>
+<summary>Alternative: Install from source or use pre-built binary</summary>
+
+#### Option 1: Pre-built binary
 
 The compiled MCP server is in `dist/obsidian-bootstrap`.
 
@@ -32,10 +50,10 @@ Add to `mcpServers`:
 }
 ```
 
-### Build from source
+#### Option 2: Build from source
 
 ```bash
-git clone https://github.com/yourusername/bootstrap-vault
+git clone https://github.com/jshph/bootstrap-vault
 cd bootstrap-vault
 bun install
 bun run build
@@ -43,7 +61,7 @@ bun run build
 
 Outputs `dist/obsidian-bootstrap` (no extra template files required).
 
-### Development
+#### Option 3: Development mode
 
 Run with Bun:
 
@@ -57,6 +75,8 @@ Run with Bun:
   }
 }
 ```
+
+</details>
 
 ## Usage
 
