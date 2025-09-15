@@ -16,7 +16,7 @@ echo "======================================"
 echo ""
 
 # Configuration
-BINARY_URL="https://raw.githubusercontent.com/jshph/bootstrap-vault/main/dist/obsidian-bootstrap"
+BINARY_URL="https://raw.githubusercontent.com/jshph/obsidian-bootstrap/main/dist/obsidian-bootstrap"
 INSTALL_DIR="$HOME/.claude/mcp-servers/obsidian-bootstrap"
 BINARY_NAME="obsidian-bootstrap"
 

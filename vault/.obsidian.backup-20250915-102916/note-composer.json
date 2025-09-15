@@ -1,0 +1,5 @@
+{
+  "askBeforeMerging": true,
+  "template": "note_composer/quote reflections",
+  "replacementText": "link"
+}

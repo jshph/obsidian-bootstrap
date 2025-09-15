@@ -16,7 +16,7 @@ An MCP (Model Context Protocol) server that exposes a single prompt to help you 
 Run this one-liner to automatically install the obsidian-bootstrap MCP server:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jshph/bootstrap-vault/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/jshph/obsidian-bootstrap/main/setup.sh | bash
 ```
 
 This will:
@@ -53,8 +53,8 @@ Add to `mcpServers`:
 #### Option 2: Build from source
 
 ```bash
-git clone https://github.com/jshph/bootstrap-vault
-cd bootstrap-vault
+git clone https://github.com/jshph/obsidian-bootstrap
+cd obsidian-bootstrap
 bun install
 bun run build
 ```
