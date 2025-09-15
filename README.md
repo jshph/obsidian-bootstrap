@@ -4,7 +4,6 @@ An MCP (Model Context Protocol) server that helps you bootstrap new Obsidian vau
 
 ## Features
 
-- Prompts-only: One prompt `bootstrap_vault`; no MCP tools
 - Transparent: Uses `mkdir`, `cat`, `cp`, and `git clone`
 - Template presets: minimal, para, pkm, zettelkasten (folder lists only)
 - Migration helper: Analyze a repo's `.obsidian` and copy configs
