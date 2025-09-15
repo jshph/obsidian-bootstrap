@@ -386,7 +386,53 @@ find /tmp/obsidian-analysis/.obsidian/plugins -name "manifest.json" -exec sh -c 
 - Highlight important settings to configure
 - Suggest starting points for the user
 
-Remember: Don't overcomplicate! Use basic bash commands and explain what you're doing.`,
+### For Fresh Vaults with Templates:
+
+When creating from scratch:
+1. Use create_vault tool to make directories
+2. Create basic config files if needed:
+
+\`\`\`bash
+# Create basic app.json
+cat > [VAULT_PATH]/.obsidian/app.json << 'EOF'
+{
+  "attachmentFolderPath": "attachments",
+  "alwaysUpdateLinks": true,
+  "showLineNumber": true,
+  "defaultViewMode": "source"
+}
+EOF
+
+# Create core-plugins.json (enable useful defaults)
+cat > [VAULT_PATH]/.obsidian/core-plugins.json << 'EOF'
+{
+  "file-explorer": true,
+  "global-search": true,
+  "switcher": true,
+  "graph": true,
+  "backlink": true,
+  "canvas": true,
+  "outgoing-link": true,
+  "tag-pane": true,
+  "properties": true,
+  "page-preview": true,
+  "daily-notes": true,
+  "templates": true,
+  "note-composer": true,
+  "command-palette": true,
+  "outline": true,
+  "word-count": true,
+  "file-recovery": true
+}
+EOF
+
+# For specific templates, suggest plugins:
+# PARA: templater, tasks, kanban
+# PKM: templater, dataview, quickadd
+# Zettelkasten: templater, unique-note-id
+\`\`\`
+
+Remember: Keep it simple! The user will configure details in Obsidian.`,
         },
       },
     ];
