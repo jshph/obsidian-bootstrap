@@ -1,6 +1,6 @@
 # Obsidian Vault Bootstrap MCP Server
 
-An MCP (Model Context Protocol) server that exposes a single prompt to help you bootstrap new Obsidian vaults or migrate from existing GitHub repos using simple, transparent bash commands. No tools, no hidden logic — just clear instructions you can run yourself.
+An MCP (Model Context Protocol) server that helps you bootstrap new Obsidian vaults or migrate from existing GitHub repos using simple, transparent bash commands.
 
 ## Features
 
