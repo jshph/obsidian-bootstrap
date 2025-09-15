@@ -1,56 +1,26 @@
 # Obsidian Vault Bootstrap MCP Server
 
-An MCP (Model Context Protocol) server that helps you quickly bootstrap new Obsidian vaults with pre-configured templates, folder structures, plugins, and Templater integration.
+An MCP (Model Context Protocol) server that exposes a single prompt to help you bootstrap new Obsidian vaults or migrate from existing GitHub repos using simple, transparent bash commands. No tools, no hidden logic — just clear instructions you can run yourself.
 
 ## Features
 
-- 🎯 **12 Vault Templates**: From minimal to specialized (Research, GTD, Zettelkasten, etc.)
-- 📁 **Auto Folder Structure**: Each template includes optimized folder organization
-- 🔌 **Plugin Auto-Installation**: Plugins automatically install when you open the vault
-- 📝 **Templater Integration**: Pre-configured Templater templates with hotkeys
-- 📚 **Readwise Integration**: Automatic import of highlights from books, articles, and podcasts
-- 🎨 **Quick Access**: Ribbon buttons for frequently used templates
-- 🤖 **Interactive Wizard**: Step-by-step guidance through vault creation
+- Prompts-only: One prompt `bootstrap_vault`; no MCP tools
+- Transparent: Uses `mkdir`, `cat`, `cp`, and `git clone`
+- Template presets: minimal, para, pkm, zettelkasten (folder lists only)
+- Migration helper: Analyze a repo’s `.obsidian` and copy configs
 
-### Included Plugins
+## Install
 
-The following plugins come pre-installed with full functionality:
-- **Templater** - Advanced templating with variables and functions
-- **Dataview** - Query and visualize your notes like a database
-- **QuickAdd** - Quickly capture notes and apply templates
-- **Tasks** - Track tasks across your entire vault
-- **Readwise Official** - Sync highlights from books and articles
-- **Calendar** - Visual calendar for daily notes (if selected)
+### Pre-built binary
 
-## Available Templates
+The compiled MCP server is in `dist/obsidian-bootstrap`.
 
-1. **Minimal** - Clean start with basic folders
-2. **PKM** - Personal Knowledge Management with PARA method
-3. **Research** - Academic research with citations
-4. **Zettelkasten** - Atomic notes with unique IDs
-5. **Project** - Task and project management
-6. **Journaling** - Daily reflection and gratitude
-7. **Technical** - Documentation and code snippets
-8. **Creative** - Writing and worldbuilding
-9. **GTD** - Getting Things Done methodology
-10. **Business** - Strategy and metrics tracking
-11. **Content** - Blog and content creation
-12. **Learning** - Courses and study notes
-
-## Installation
-
-### Using Pre-built Binary (Recommended)
-
-The MCP server is available as a pre-built executable in the `dist` folder. This requires the templates directory to be alongside the executable.
-
-#### Claude Desktop Configuration
-
-Edit your Claude Desktop configuration file:
+Claude Desktop configuration (paths vary by OS):
 - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 - Linux: `~/.config/claude/claude_desktop_config.json`
 
-Add the following to the `mcpServers` section:
+Add to `mcpServers`:
 
 ```json
 {
@@ -62,31 +32,20 @@ Add the following to the `mcpServers` section:
 }
 ```
 
-**Important**: The `dist` folder contains:
-- `obsidian-bootstrap` - The executable MCP server
-- `templates/` - Required template files (must be in same directory)
-
-### Building from Source
+### Build from source
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/obsidian-vault-bootstrap
-cd obsidian-vault-bootstrap
-
-# Install dependencies
+git clone https://github.com/yourusername/bootstrap-vault
+cd bootstrap-vault
 bun install
-
-# Build the executable
-./build.sh
+bun run build
 ```
 
-This creates:
-- `dist/obsidian-bootstrap` - Compiled executable
-- `dist/templates/` - Template files with plugin manifests
+Outputs `dist/obsidian-bootstrap` (no extra template files required).
 
-### Development Mode
+### Development
 
-For development, you can run directly with Bun:
+Run with Bun:
 
 ```json
 {
@@ -97,32 +56,45 @@ For development, you can run directly with Bun:
     }
   }
 }
+```
 
 ## Usage
 
-### With Claude Desktop (Claude Code)
+### Direct CLI Invocation (Fastest)
 
-There are two ways to add this MCP server to Claude:
+You can directly bootstrap a vault from the command line:
 
-#### Option 1: Project-Scoped (Recommended for sharing)
+```bash
+# Use default configuration (https://github.com/jshph/.obsidian)
+claude --prompt obsidian-bootstrap:bootstrap_vault
 
-From your project directory, run:
+# Specify custom location
+claude --prompt obsidian-bootstrap:bootstrap_vault location="~/Documents/MyVault"
+
+# Use a different GitHub config
+claude --prompt obsidian-bootstrap:bootstrap_vault github_repo="https://github.com/kepano/obsidian-minimal"
+
+# Both custom location and repo
+claude --prompt obsidian-bootstrap:bootstrap_vault location="~/Vaults/Work" github_repo="https://github.com/your/config"
+```
+
+### Connect via Claude (recommended)
+
+Project-scoped (creates `.mcp.json` in your project):
+
 ```bash
 cd /path/to/bootstrap-vault
 claude mcp add obsidian-bootstrap --scope project "bun run src/index.ts"
 ```
 
-This creates a `.mcp.json` file in your project root that can be committed to version control.
-
-#### Option 2: User-Scoped (Personal use)
+User-scoped (available to all projects on your machine):
 
 ```bash
 claude mcp add obsidian-bootstrap --scope user "bun run /path/to/bootstrap-vault/src/index.ts"
 ```
 
-#### Option 3: Manual Configuration
+Manual `.mcp.json` option:
 
-Create `.mcp.json` in your project root:
 ```json
 {
   "mcpServers": {
@@ -135,166 +107,65 @@ Create `.mcp.json` in your project root:
 }
 ```
 
-### Using the MCP Server
+### How it works
 
-Once configured, restart Claude Desktop and you'll see the MCP server is connected.
+- Use the CLI to invoke the prompt directly, or ask Claude to use the `bootstrap_vault` prompt:
+  - "Create a PKM vault called Second-Brain in ~/Documents"
+  - "Help me migrate from https://github.com/kepano/obsidian-minimal"
+- The server returns a structured prompt; Claude then generates and runs bash commands on your machine (with your confirmation). You can approve/decline each step.
 
-#### Quick Commands
-
-In Claude Desktop, you can use these commands:
-
-```
-Create a PKM vault for personal knowledge management
-```
-
-```
-Set up a research vault for my PhD thesis
-```
-
-```
-I need a GTD vault for task management
-```
-
-Or use the interactive wizard:
-```
-Use the bootstrap_vault prompt to help me create a new Obsidian vault
-```
-
-Claude will guide you through:
-1. Understanding your use case
-2. Recommending the best template
-3. Creating your vault with plugins pre-installed
-4. Setting up folder structure
-5. Providing a personalized quick-start guide
-
-#### What Happens Next
-
-After vault creation:
-1. Open the vault in Obsidian
-2. When prompted about restricted mode, click "Turn off restricted mode"
-3. Plugins will be automatically recognized and enabled
-4. Start using your pre-configured templates with hotkeys
-
-### Standalone Testing
+### Example: Create a PKM vault (run by Claude)
 
 ```bash
-bun run src/index.ts
+VAULT_PATH=~/Documents/Obsidian/Second-Brain
+mkdir -p "$VAULT_PATH/.obsidian"
+mkdir -p "$VAULT_PATH"/{MOCs,Sources,Ideas,Projects,daily-notes,templates,attachments}
+
+cat > "$VAULT_PATH/.obsidian/app.json" << 'EOF'
+{
+  "attachmentFolderPath": "attachments",
+  "alwaysUpdateLinks": true,
+  "showLineNumber": true,
+  "defaultViewMode": "source"
+}
+EOF
 ```
 
-## Templater Integration
+### Example: Migrate from a GitHub repo (run by Claude)
 
-Each vault comes pre-configured with Templater templates that include:
+```bash
+git clone --depth 1 https://github.com/OWNER/REPO /tmp/obsidian-analysis
+ls -la /tmp/obsidian-analysis/.obsidian/
 
-- **Hotkey Assignments**: Quick access to common templates (e.g., `Cmd+Shift+D` for daily note)
-- **Template Syntax**: Variables like `<% tp.date.now() %>` for dynamic content
-- **Folder Templates**: Auto-apply templates based on folder location
-- **Custom Functions**: Pre-built JavaScript functions for advanced workflows
-
-## Readwise Integration
-
-All templates include Readwise configuration for seamless highlight import:
-
-### Features
-- **Auto-sync**: Highlights sync every 60 minutes
-- **Custom Templates**: Separate templates for books, articles, podcasts
-- **Smart Organization**: Highlights organized by content type
-- **Metadata Preservation**: Author, source, tags, and dates preserved
-- **Cross-linking**: Automatic linking with your existing notes
-
-### Supported Sources
-- 📚 **Books**: Kindle, Apple Books, Google Books
-- 📰 **Articles**: Instapaper, Pocket, Reader
-- 🎙️ **Podcasts**: Airr, Snipd, Readwise Reader
-- 📄 **PDFs**: Via Readwise Reader app
-- 🐦 **Tweets**: Twitter highlights
-- 💭 **Supplementals**: Your own notes and thoughts
-
-### Folder Structure
-```
-Readwise/
-├── Books/        # Book highlights
-├── Articles/     # Web articles
-├── Podcasts/     # Podcast notes
-├── Tweets/       # Twitter threads
-└── Supplementals/ # Additional notes
+# Copy core configs (manifests only for plugins)
+NEW_VAULT_PATH=~/Documents/Obsidian/MyMigratedVault
+mkdir -p "$NEW_VAULT_PATH/.obsidian/plugins"
+cp -r /tmp/obsidian-analysis/.obsidian "$NEW_VAULT_PATH/"
+rm -rf "$NEW_VAULT_PATH/.obsidian/plugins"/*/
+find /tmp/obsidian-analysis/.obsidian/plugins -name "manifest.json" -exec sh -c \
+  'mkdir -p "$NEW_VAULT_PATH/.obsidian/plugins/$(basename $(dirname {}))" && \
+   cp {} "$NEW_VAULT_PATH/.obsidian/plugins/$(basename $(dirname {}))"' \;
 ```
 
-### Ribbon Customization
+## Notes
 
-The bootstrap process configures:
-- Quick access buttons in the left ribbon for frequent templates
-- Command palette shortcuts for all templates
-- Mobile toolbar buttons for iOS/Android usage
-
-## Template Features
-
-### Daily Note Template (All Vaults)
-- Auto-dated filename
-- Links to previous/next day
-- Task rollover from yesterday
-- Weather widget (with API key)
-- Random quote/prompt
-- Mood and habit trackers
-
-### Meeting Template (Business/Project)
-- Attendee tracker
-- Action item assignments
-- Follow-up scheduling
-- Meeting timer
-- Agenda templates
-
-### Literature Note (Research/Zettelkasten)
-- Citation formatting
-- Key concepts extraction
-- Connection finder
-- Bibliography generation
-- Readwise integration
-
-### Book/Article Templates (via Readwise)
-- Automatic metadata extraction
-- Highlight organization
-- Reading progress tracking
-- Related notes linking
-- Action items from reading
-
-## Interactive Setup Wizard
-
-The MCP server uses a conversational approach to:
-1. **Understand your needs**: Asks about your use case and workflow
-2. **Recommend the best template**: Based on your requirements
-3. **Configure step-by-step**: Sets up folders, plugins, and templates
-4. **Provide personalized guidance**: Custom quick-start guide for your use case
-
-## Advanced Configuration
-
-The MCP server also supports:
-- **Custom CSS Snippets**: Theme modifications per template
-- **Workspace Layouts**: Pre-configured pane arrangements
-- **Graph View Settings**: Optimized for each vault type
-- **Plugin Settings**: Pre-configured plugin options
-- **Sync Settings**: Git integration setup
-- **Readwise API**: Pre-configured for highlight import
+- The MCP server itself does not execute commands; Claude runs the bash it generates in your shell with your approval.
+- No MCP tools are exposed — only the `bootstrap_vault` prompt.
+- Templates define suggested folders only; you choose any plugins inside Obsidian.
 
 ## Development
 
 ```bash
-# Run in development
+# Dev (auto-reload)
 bun run dev
 
-# Run tests
-bun test
-
-# Build for production
+# Build
 bun run build
 ```
-
-## Contributing
-
-Contributions welcome! Please read our contributing guidelines before submitting PRs.
 
 ## License
 
 MIT
 
 ---
-This project was created using `bun init` in bun v1.2.4. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+Built with Bun. This project ships a prompts-only MCP server per SIMPLIFICATION_NOTES.md.

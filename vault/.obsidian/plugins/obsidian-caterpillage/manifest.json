@@ -1,0 +1,14 @@
+
+{
+  "id": "obsidian-caterpillage",
+  "name": "Caterpillage",
+  "version": "0.3.2",
+  "minAppVersion": "1.1.10",
+  "description": "Obsidian plugin to copy tagged notes to another vault with content processing",
+  "author": "Joshua Pham",
+  "authorUrl": "https://jpham.space",
+  "isDesktopOnly": true,
+  "fundingUrl": {
+    "Buy Me a Coffee": "https://www.buymeacoffee.com/jpham"
+  }
+}

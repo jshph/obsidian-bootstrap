@@ -2,7 +2,7 @@
   "mcpServers": {
     "obsidian-bootstrap": {
       "type": "stdio",
-      "command": "./dist/obsidian-bootstrap",
+      "command": "/Users/joshuapham/Hacks/bootstrap-vault/dist/obsidian-bootstrap",
       "args": [],
       "env": {}
     }

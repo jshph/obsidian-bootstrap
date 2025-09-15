@@ -1,0 +1,6 @@
+{
+  "snapToObjects": false,
+  "snapToGrid": false,
+  "defaultWheelBehavior": "pan",
+  "defaultModDragBehavior": "group"
+}

@@ -2,47 +2,16 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
-  CallToolRequestSchema,
   ListPromptsRequestSchema,
   GetPromptRequestSchema,
-  ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type {
   PromptMessage,
-  Tool,
 } from "@modelcontextprotocol/sdk/types.js";
-import * as fs from "fs/promises";
 import * as path from "path";
-import { existsSync } from "fs";
 import * as os from "os";
 
-// Vault template definitions
-const VAULT_TEMPLATES: Record<string, any> = {
-  minimal: {
-    name: "Minimal Starter",
-    description: "Clean start with basic folder structure",
-    folders: ["notes", "daily", "attachments"],
-    features: ["Simple daily notes", "Basic folder organization"],
-  },
-  para: {
-    name: "PARA Method",
-    description: "Projects, Areas, Resources, Archive - for productivity",
-    folders: ["1-Projects", "2-Areas", "3-Resources", "4-Archive", "daily-notes", "templates", "attachments"],
-    features: ["PARA organization", "Project tracking", "Daily notes", "Weekly reviews"],
-  },
-  pkm: {
-    name: "Personal Knowledge Management",
-    description: "Learning-focused with MOCs and progressive summarization",
-    folders: ["MOCs", "Sources", "Ideas", "Projects", "daily-notes", "templates", "attachments"],
-    features: ["Maps of Content", "Progressive summarization", "Daily notes", "Idea development"],
-  },
-  zettelkasten: {
-    name: "Zettelkasten",
-    description: "Atomic notes with unique IDs for academic research",
-    folders: ["fleeting", "literature", "permanent", "index", "attachments"],
-    features: ["Unique note IDs", "Atomic notes", "Strict linking", "Emergence patterns"],
-  },
-};
+// Vault templates are described in the prompt; no tool handlers required.
 
 // Initialize MCP server
 const server = new Server(
@@ -53,235 +22,17 @@ const server = new Server(
   {
     capabilities: {
       prompts: {},
-      tools: {},
     },
   }
 );
 
+// No tools needed - everything is handled through the prompt!
+// The AI agent will use bash commands directly to create vaults.
 
-const createVaultTool: Tool = {
-  name: "create_vault",
-  description: "Create a new Obsidian vault with selected template",
-  inputSchema: {
-    type: "object",
-    properties: {
-      path: {
-        type: "string",
-        description: "Path where the vault should be created (optional, defaults to ~/Documents/Obsidian)",
-      },
-      template: {
-        type: "string",
-        enum: Object.keys(VAULT_TEMPLATES),
-        description: "Template type to use",
-      },
-      name: {
-        type: "string",
-        description: "Name of the vault",
-      },
-    },
-    required: ["template", "name"],
-  },
-};
+// We used to have tools here, but removed them for simplicity.
+// Everything is now done through the bootstrap_vault prompt.
 
-// Tool: List templates
-const listTemplatesTool: Tool = {
-  name: "list_templates",
-  description: "List all available vault templates",
-  inputSchema: {
-    type: "object",
-    properties: {},
-  },
-};
-
-// Register tools
-server.setRequestHandler(ListToolsRequestSchema, async () => ({
-  tools: [createVaultTool, listTemplatesTool],
-}));
-
-// Handle tool calls
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
-  const { name, arguments: args } = request.params;
-  
-  switch (name) {
-    case "create_vault": {
-      const { path: vaultPath, template, name: vaultName } = args as any;
-      
-      // Expand and validate the path
-      let expandedPath = vaultPath;
-      
-      // If no path provided, use default
-      if (!expandedPath || expandedPath === '') {
-        expandedPath = path.join(os.homedir(), 'Documents', 'Obsidian');
-      }
-      
-      // Handle common path shortcuts
-      if (expandedPath.startsWith('~')) {
-        expandedPath = expandedPath.replace(/^~/, os.homedir());
-      }
-      
-      // Handle relative paths like "Documents" or "Desktop"
-      if (!expandedPath.startsWith('/') && !expandedPath.startsWith('C:') && !expandedPath.includes(':')) {
-        // It's a relative path, prepend home directory
-        expandedPath = path.join(os.homedir(), expandedPath);
-      }
-      
-      // If path starts with /Users/Documents without username, add current user
-      if (expandedPath === '/Users/Documents' || expandedPath.startsWith('/Users/Documents/')) {
-        const homeDir = os.homedir();
-        expandedPath = expandedPath.replace('/Users/Documents', `${homeDir}/Documents`);
-      }
-      
-      // Default to Documents folder if path is invalid
-      if (expandedPath === '/Users' || expandedPath === '/' || expandedPath === 'C:\\') {
-        expandedPath = path.join(os.homedir(), 'Documents', 'Obsidian');
-      }
-      
-      // Ensure parent directory exists
-      try {
-        await fs.mkdir(expandedPath, { recursive: true });
-      } catch (error) {
-        console.error(`Failed to create parent directory: ${expandedPath}`);
-      }
-      
-      const fullPath = path.join(expandedPath, vaultName);
-      
-      // Check if directory already exists
-      if (existsSync(fullPath)) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error: Directory ${fullPath} already exists`,
-            },
-          ],
-        };
-      }
-      
-      try {
-        // Get template config
-        const templateConfig = VAULT_TEMPLATES[template as keyof typeof VAULT_TEMPLATES];
-        if (!templateConfig) {
-          return {
-            content: [
-              {
-                type: "text",
-                text: `Error: Unknown template "${template}"`,
-              },
-            ],
-          };
-        }
-
-        // Create vault directory
-        await fs.mkdir(fullPath, { recursive: true });
-
-        // Create folder structure
-        for (const folder of templateConfig.folders) {
-          await fs.mkdir(path.join(fullPath, folder), { recursive: true });
-        }
-
-        // Create basic .obsidian folder
-        await fs.mkdir(path.join(fullPath, '.obsidian'), { recursive: true });
-        
-        return {
-          content: [
-            {
-              type: "text",
-              text: `✅ **Vault Created Successfully!**
-
-📁 **Location:** ${fullPath}
-🎨 **Template:** ${templateConfig.name}
-
-## What I've Set Up For You:
-
-### 📂 Folder Structure
-${templateConfig.folders.map((f: string) => `- ${f}/`).join('\n')}
-
-## 🚀 Quick Start Guide
-
-### Step 1: Open Your Vault
-1. Open Obsidian
-2. Click "Open folder as vault"
-3. Select: ${fullPath}
-
-### Step 2: Enable Community Plugins
-1. When prompted about restricted mode, click "Turn off restricted mode"
-2. Plugins will auto-download and install
-3. You may need to reload Obsidian once for all plugins to activate
-
-### Step 3: Your Daily Workflow
-${template === 'pkm' ? 
-`1. **Morning**: Create daily note (Cmd+Shift+D)
-2. **During day**: Quick capture ideas (Cmd+Q)
-3. **Reading**: Highlights sync via Readwise
-4. **Evening**: Process inbox, create permanent notes
-5. **Weekly**: Review and organize` :
-template === 'research' ?
-`1. **New source**: Create literature note
-2. **While reading**: Highlight in Readwise
-3. **After reading**: Process into permanent notes
-4. **Writing**: Link notes in your drafts
-5. **Weekly**: Update bibliography` :
-`1. Start with daily note
-2. Capture ideas as they come
-3. Review and organize weekly`}
-
-### Step 4: First Actions
-- [ ] Create your first daily note
-- [ ] Set up Readwise integration
-- [ ] Explore the templates folder
-- [ ] Customize your first template
-- [ ] Create a test note with Cmd+T
-
-## 💡 Pro Tips
-- Start simple, add complexity over time
-- Use templates for everything repetitive
-- Let Readwise handle your reading highlights
-- Review and refactor regularly
-
-Your vault is ready! Open it in Obsidian to start building your knowledge system. 🎉`,
-            },
-          ],
-        };
-      } catch (error) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error creating vault: ${error}`,
-            },
-          ],
-        };
-      }
-    }
-    
-    case "list_templates": {
-      const templateList = Object.entries(VAULT_TEMPLATES)
-        .map(([key, template]) => {
-          return `**${template.name}** (${key})\n${template.description}\nFeatures: ${template.features.join(", ")}`;
-        })
-        .join("\n\n");
-
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Available Vault Templates:\n\n${templateList}`,
-          },
-        ],
-      };
-    }
-
-    default:
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Unknown tool: ${name}`,
-          },
-        ],
-      };
-  }
-});
+// (Removed legacy tool handlers; prompts-only server.)
 
 // Register prompts
 server.setRequestHandler(ListPromptsRequestSchema, async () => ({
@@ -292,7 +43,12 @@ server.setRequestHandler(ListPromptsRequestSchema, async () => ({
       arguments: [
         {
           name: "location",
-          description: "Where to create the vault (optional)",
+          description: "Where to create the vault (optional, defaults to ~/Documents/Obsidian)",
+          required: false,
+        },
+        {
+          name: "github_repo",
+          description: "GitHub repo URL with .obsidian config to migrate from (optional, defaults to https://github.com/jshph/.obsidian)",
           required: false,
         },
       ],
@@ -308,29 +64,173 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
     // Get the actual user's Documents path
     const defaultLocation = path.join(os.homedir(), 'Documents', 'Obsidian');
     const location = args?.location || defaultLocation;
+    const defaultGithubRepo = 'https://github.com/jshph/.obsidian';
+    const githubRepo = args?.github_repo || defaultGithubRepo;
 
-    const messages: PromptMessage[] = [
-      {
-        role: "assistant",
-        content: {
-          type: "text",
-          text: `# 🎯 Obsidian Vault Bootstrap & Migration Assistant
+    // Build the message content based on whether custom repo is provided
+    let messageContent;
 
-I'll help you create a new Obsidian vault or migrate an existing configuration.
+    if (args?.github_repo) {
+      // Custom repo provided - just migration instructions
+      messageContent = `# 🎯 Obsidian Vault Migration Assistant
 
-## Option 1: Fresh Start with Templates 📚
+I'll help you migrate your Obsidian configuration from: **${githubRepo}**
+
+Target location: **${location}**
+
+I'll now clone and analyze the repository to set up your new vault with the same configuration.
+
+---
+
+## For AI Agent: Migration Instructions
+
+Migrate from ${githubRepo} to ${location}:
+
+### 1. Clone and Analyze
+\`\`\`bash
+# Clone the repo to a local temp directory (in current working directory)
+git clone --depth 1 ${githubRepo} ./temp-obsidian-analysis
+
+# Check for OBSIDIAN.md to understand vault structure
+if [ -f "./temp-obsidian-analysis/OBSIDIAN.md" ]; then
+    cat ./temp-obsidian-analysis/OBSIDIAN.md
+fi
+
+# Check for .obsidian folder
+ls -la ./temp-obsidian-analysis/.obsidian/
+
+# List plugins
+ls ./temp-obsidian-analysis/.obsidian/plugins/
+
+# Check key config files
+cat ./temp-obsidian-analysis/.obsidian/app.json
+cat ./temp-obsidian-analysis/.obsidian/hotkeys.json
+cat ./temp-obsidian-analysis/.obsidian/community-plugins.json
+\`\`\`
+
+### 2. Create New Vault
+\`\`\`bash
+# Check if vault directory already exists
+if [ -d "${location}/[VAULT_NAME]" ]; then
+    echo "⚠️ Vault directory already exists at ${location}/[VAULT_NAME]"
+    echo "It contains:"
+    ls -la ${location}/[VAULT_NAME]/
+
+    # Check for existing .obsidian folder
+    if [ -d "${location}/[VAULT_NAME]/.obsidian" ]; then
+        echo "🔍 Found existing .obsidian configuration"
+        echo "Please confirm what to migrate:"
+        echo "1. Merge configs (keep existing, add new plugins)"
+        echo "2. Replace configs (backup existing, use new)"
+        echo "3. Skip config migration (only copy templates/folders)"
+        # User should decide before proceeding
+    fi
+else
+    # Fresh vault - create everything
+    mkdir -p ${location}/[VAULT_NAME]
+
+    # Create folder structure based on OBSIDIAN.md guidance (if found)
+    # Common folders from vault templates:
+    mkdir -p ${location}/[VAULT_NAME]/{inbox,projects,areas,resources,archive,templates,attachments}
+
+    # Copy .obsidian folder (including full plugin folders)
+    cp -r ./temp-obsidian-analysis/.obsidian ${location}/[VAULT_NAME]/
+
+    # Copy templates folder to vault root if it exists
+    if [ -d "./temp-obsidian-analysis/templates" ]; then
+        cp -r ./temp-obsidian-analysis/templates ${location}/[VAULT_NAME]/
+    fi
+
+    # Copy any other essential folders mentioned in OBSIDIAN.md (but NOT documentation files)
+    # Example: inbox, daily-notes, etc. if they exist and contain templates/examples
+
+    # Remove workspace files (they contain user-specific session state)
+    rm -f ${location}/[VAULT_NAME]/.obsidian/workspace.json
+    rm -f ${location}/[VAULT_NAME]/.obsidian/workspace-mobile.json
+    rm -f ${location}/[VAULT_NAME]/.obsidian/workspaces.json
+fi
+
+# Create a Getting Started guide for the user
+cat > ${location}/[VAULT_NAME]/Getting-Started.md << 'EOF'
+# Getting Started with Your Migrated Vault
+
+This vault was migrated from: ${githubRepo}
+
+## Folder Structure
+- **inbox/** - Quick capture for new notes
+- **projects/** - Active projects
+- **areas/** - Ongoing responsibilities
+- **resources/** - Reference materials
+- **archive/** - Completed/inactive items
+- **templates/** - Note templates
+- **attachments/** - Images and files
+
+## Key Hotkeys
+Check Settings > Hotkeys for all configured shortcuts. Common ones:
+- Cmd/Ctrl + P: Command palette
+- Cmd/Ctrl + O: Quick switcher
+- Cmd/Ctrl + N: New note
+
+## Installed Plugins
+View Settings > Community Plugins to see what's installed.
+You may need to enable plugins and configure API keys.
+
+## Next Steps
+1. Review Settings > Options for vault preferences
+2. Check Templates folder for available templates
+3. Configure Daily Notes if using that workflow
+4. Set up any plugin-specific settings
+
+Happy note-taking! 🚀
+EOF
+
+# Clean up the temporary directory when done
+rm -rf ./temp-obsidian-analysis
+\`\`\``;
+    } else {
+      // No custom repo - show options including default
+      messageContent = `# 🎯 Obsidian Vault Bootstrap & Migration Assistant
+
+I'll help you create a new Obsidian vault with a proven configuration.
+
+## Option 1: Use Default Configuration 🎯
+
+**Default config:** ${defaultGithubRepo}
+**Target location:** ${location}
+
+Say: **"Create my vault with the default config"** or **"Create a vault called MyVault"**
+
+This will set up your vault with a well-tested configuration including:
+- Quick capture inbox workflow
+- Daily notes with templates
+- Task management
+- Essential plugins pre-configured
+
+## Option 2: Fresh Start with Templates 📚
 
 **Quick Presets:**
-- **minimal** - Clean start with basic folders
-- **para** - Projects, Areas, Resources, Archive method
-- **pkm** - Personal Knowledge Management with MOCs
-- **zettelkasten** - Academic note-taking with atomic notes
+
+**minimal** - Clean start with basic folders
+- Folders: notes, daily, attachments
+- Features: Simple daily notes, Basic folder organization
+
+**para** - Projects, Areas, Resources, Archive method
+- Folders: 1-Projects, 2-Areas, 3-Resources, 4-Archive, daily-notes, templates, attachments
+- Features: PARA organization, Project tracking, Daily notes, Weekly reviews
+
+**pkm** - Personal Knowledge Management with MOCs
+- Folders: MOCs, Sources, Ideas, Projects, daily-notes, templates, attachments
+- Features: Maps of Content, Progressive summarization, Daily notes, Idea development
+
+**zettelkasten** - Academic note-taking with atomic notes
+- Folders: fleeting, literature, permanent, index, attachments
+- Features: Unique note IDs, Atomic notes, Strict linking, Emergence patterns
 
 **Example:** "Create a PKM vault called Second-Brain"
 
-## Option 2: Migrate from GitHub Repo 🔄
+## Option 3: Migrate from Your GitHub Repo 🔄
 
-**Share a GitHub URL with a .obsidian folder and I'll:**
+**Provide your own GitHub URL with a .obsidian folder and I'll:**
 1. Clone and analyze the configuration
 2. Explain the key hotkeys and workflows
 3. Guide you through recreating the setup
@@ -340,38 +240,116 @@ I'll help you create a new Obsidian vault or migrate an existing configuration.
 
 ---
 
-## For AI Agent: Migration Instructions
+## For AI Agent: Instructions
+
+When user wants to use default config or doesn't specify:
+- Use ${defaultGithubRepo} as the source
+- Follow migration instructions below
 
 When user provides a GitHub URL:
+- Use the provided URL as the source
+- Follow migration instructions below
 
 ### 1. Clone and Analyze
 \`\`\`bash
-# Clone the repo to temp directory
-git clone --depth 1 [REPO_URL] /tmp/obsidian-analysis
+# Clone the repo to a local temp directory (in current working directory)
+git clone --depth 1 [REPO_URL] ./temp-obsidian-analysis
+
+# Check for OBSIDIAN.md to understand vault structure
+if [ -f "./temp-obsidian-analysis/OBSIDIAN.md" ]; then
+    cat ./temp-obsidian-analysis/OBSIDIAN.md
+fi
 
 # Check for .obsidian folder
-ls -la /tmp/obsidian-analysis/.obsidian/
+ls -la ./temp-obsidian-analysis/.obsidian/
 
 # List plugins
-ls /tmp/obsidian-analysis/.obsidian/plugins/
+ls ./temp-obsidian-analysis/.obsidian/plugins/
 
 # Check key config files
-cat /tmp/obsidian-analysis/.obsidian/app.json
-cat /tmp/obsidian-analysis/.obsidian/hotkeys.json
-cat /tmp/obsidian-analysis/.obsidian/community-plugins.json
+cat ./temp-obsidian-analysis/.obsidian/app.json
+cat ./temp-obsidian-analysis/.obsidian/hotkeys.json
+cat ./temp-obsidian-analysis/.obsidian/community-plugins.json
 \`\`\`
 
 ### 2. Create New Vault
 \`\`\`bash
-# Use create_vault tool for base structure
-# Then manually copy configs
+# Check if vault directory already exists
+if [ -d "[NEW_VAULT_PATH]" ]; then
+    echo "⚠️ Vault directory already exists at [NEW_VAULT_PATH]"
+    echo "It contains:"
+    ls -la [NEW_VAULT_PATH]/
 
-# Copy .obsidian folder (excluding plugins data)
-cp -r /tmp/obsidian-analysis/.obsidian [NEW_VAULT_PATH]/
-rm -rf [NEW_VAULT_PATH]/.obsidian/plugins/*/
+    # Check for existing .obsidian folder
+    if [ -d "[NEW_VAULT_PATH]/.obsidian" ]; then
+        echo "🔍 Found existing .obsidian configuration"
+        echo "Please confirm what to migrate:"
+        echo "1. Merge configs (keep existing, add new plugins)"
+        echo "2. Replace configs (backup existing, use new)"
+        echo "3. Skip config migration (only copy templates/folders)"
+        # User should decide before proceeding
+    fi
+else
+    # Fresh vault - create everything
+    mkdir -p [NEW_VAULT_PATH]
 
-# Just keep plugin manifests
-find /tmp/obsidian-analysis/.obsidian/plugins -name "manifest.json" -exec sh -c 'mkdir -p [NEW_VAULT_PATH]/.obsidian/plugins/$(basename $(dirname {})) && cp {} [NEW_VAULT_PATH]/.obsidian/plugins/$(basename $(dirname {}))/' \\;
+    # Create folder structure based on OBSIDIAN.md guidance (if found)
+    # Common folders from vault templates:
+    mkdir -p [NEW_VAULT_PATH]/{inbox,projects,areas,resources,archive,templates,attachments}
+
+    # Copy .obsidian folder (including full plugin folders)
+    cp -r ./temp-obsidian-analysis/.obsidian [NEW_VAULT_PATH]/
+
+    # Copy templates folder to vault root if it exists
+    if [ -d "./temp-obsidian-analysis/templates" ]; then
+        cp -r ./temp-obsidian-analysis/templates [NEW_VAULT_PATH]/
+    fi
+
+    # Copy any other essential folders mentioned in OBSIDIAN.md (but NOT documentation files)
+    # Example: inbox, daily-notes, etc. if they exist and contain templates/examples
+
+    # Remove workspace files (they contain user-specific session state)
+    rm -f [NEW_VAULT_PATH]/.obsidian/workspace.json
+    rm -f [NEW_VAULT_PATH]/.obsidian/workspace-mobile.json
+    rm -f [NEW_VAULT_PATH]/.obsidian/workspaces.json
+fi
+
+# Create a Getting Started guide for the user
+cat > [NEW_VAULT_PATH]/Getting-Started.md << 'EOF'
+# Getting Started with Your Migrated Vault
+
+This vault was migrated from a GitHub repository. Here's what you need to know:
+
+## Folder Structure
+- **inbox/** - Quick capture for new notes
+- **projects/** - Active projects
+- **areas/** - Ongoing responsibilities
+- **resources/** - Reference materials
+- **archive/** - Completed/inactive items
+- **templates/** - Note templates
+- **attachments/** - Images and files
+
+## Key Hotkeys
+Check Settings > Hotkeys for all configured shortcuts. Common ones:
+- Cmd/Ctrl + P: Command palette
+- Cmd/Ctrl + O: Quick switcher
+- Cmd/Ctrl + N: New note
+
+## Installed Plugins
+View Settings > Community Plugins to see what's installed.
+You may need to enable plugins and configure API keys.
+
+## Next Steps
+1. Review Settings > Options for vault preferences
+2. Check Templates folder for available templates
+3. Configure Daily Notes if using that workflow
+4. Set up any plugin-specific settings
+
+Happy note-taking! 🚀
+EOF
+
+# Clean up the temporary directory when done
+rm -rf ./temp-obsidian-analysis
 \`\`\`
 
 ### 3. Explain Key Features
@@ -388,13 +366,35 @@ find /tmp/obsidian-analysis/.obsidian/plugins -name "manifest.json" -exec sh -c 
 
 ### For Fresh Vaults with Templates:
 
-When creating from scratch:
-1. Use create_vault tool to make directories
-2. Create basic config files if needed:
+When user asks to create a vault (e.g., "Create a PKM vault called Second-Brain"):
+
+1. Create the vault directory and folders:
+
+\`\`\`bash
+# Set vault path (default: ~/Documents/Obsidian/VaultName)
+VAULT_PATH=~/Documents/Obsidian/Second-Brain
+
+# Create vault and .obsidian directory
+mkdir -p "$VAULT_PATH/.obsidian"
+
+# For PKM template, create these folders:
+mkdir -p "$VAULT_PATH"/{MOCs,Sources,Ideas,Projects,daily-notes,templates,attachments}
+
+# For PARA template:
+# mkdir -p "$VAULT_PATH"/{1-Projects,2-Areas,3-Resources,4-Archive,daily-notes,templates,attachments}
+
+# For Zettelkasten:
+# mkdir -p "$VAULT_PATH"/{fleeting,literature,permanent,index,attachments}
+
+# For Minimal:
+# mkdir -p "$VAULT_PATH"/{notes,daily,attachments}
+\`\`\`
+
+2. Create basic config files:
 
 \`\`\`bash
 # Create basic app.json
-cat > [VAULT_PATH]/.obsidian/app.json << 'EOF'
+cat > "$VAULT_PATH/.obsidian/app.json" << 'EOF'
 {
   "attachmentFolderPath": "attachments",
   "alwaysUpdateLinks": true,
@@ -404,7 +404,7 @@ cat > [VAULT_PATH]/.obsidian/app.json << 'EOF'
 EOF
 
 # Create core-plugins.json (enable useful defaults)
-cat > [VAULT_PATH]/.obsidian/core-plugins.json << 'EOF'
+cat > "$VAULT_PATH/.obsidian/core-plugins.json" << 'EOF'
 {
   "file-explorer": true,
   "global-search": true,
@@ -432,14 +432,22 @@ EOF
 # Zettelkasten: templater, unique-note-id
 \`\`\`
 
-Remember: Keep it simple! The user will configure details in Obsidian.`,
+Remember: Keep it simple! The user will configure details in Obsidian.`;
+    }
+
+    const messages: PromptMessage[] = [
+      {
+        role: "assistant",
+        content: {
+          type: "text",
+          text: messageContent,
         },
       },
     ];
-    
+
     return { messages };
   }
-  
+
   return { messages: [] };
 });
 
