@@ -80,8 +80,6 @@ Run with Bun:
 
 ## Usage
 
-### Direct CLI Invocation (Fastest)
-
 You can directly bootstrap a vault from the command line:
 
 ```bash
@@ -92,46 +90,17 @@ claude --prompt obsidian-bootstrap:bootstrap_vault
 claude --prompt obsidian-bootstrap:bootstrap_vault location="~/Documents/MyVault"
 
 # Use a different GitHub config
-claude --prompt obsidian-bootstrap:bootstrap_vault github_repo="https://github.com/kepano/obsidian-minimal"
+claude --prompt obsidian-bootstrap:bootstrap_vault github_repo="https://github.com/your/config"
 
 # Both custom location and repo
 claude --prompt obsidian-bootstrap:bootstrap_vault location="~/Vaults/Work" github_repo="https://github.com/your/config"
-```
-
-### Connect via Claude (recommended)
-
-Project-scoped (creates `.mcp.json` in your project):
-
-```bash
-cd /path/to/bootstrap-vault
-claude mcp add obsidian-bootstrap --scope project "bun run src/index.ts"
-```
-
-User-scoped (available to all projects on your machine):
-
-```bash
-claude mcp add obsidian-bootstrap --scope user "bun run /path/to/bootstrap-vault/src/index.ts"
-```
-
-Manual `.mcp.json` option:
-
-```json
-{
-  "mcpServers": {
-    "obsidian-bootstrap": {
-      "command": "bun",
-      "args": ["run", "src/index.ts"],
-      "cwd": "/path/to/bootstrap-vault"
-    }
-  }
-}
 ```
 
 ### How it works
 
 - Use the CLI to invoke the prompt directly, or ask Claude to use the `bootstrap_vault` prompt:
   - "Create a PKM vault called Second-Brain in ~/Documents"
-  - "Help me migrate from https://github.com/kepano/obsidian-minimal"
+  - "Help me migrate from https://github.com/jshph/.obsidian"
 - The server returns a structured prompt; Claude then generates and runs bash commands on your machine (with your confirmation). You can approve/decline each step.
 
 ### Example: Create a PKM vault (run by Claude)

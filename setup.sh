@@ -67,7 +67,7 @@ if [ $? -eq 0 ]; then
     echo ""
     echo "Or ask Claude to:"
     echo "  'Create a PKM vault in ~/Documents'"
-    echo "  'Help me migrate from https://github.com/kepano/obsidian-minimal'"
+    echo "  'Help me migrate from https://github.com/jshph/.obsidian'"
 else
     echo -e "${YELLOW}⚠️  Failed to register with Claude Code${NC}"
     echo "You can manually add it to your Claude config with:"
