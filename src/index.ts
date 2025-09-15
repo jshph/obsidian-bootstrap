@@ -18,13 +18,9 @@ import { existsSync } from "fs";
 import * as os from "os";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { exec } from 'child_process';
-import { promisify } from 'util';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-const execAsync = promisify(exec);
 
 // Helper to find template directory
 function findTemplatesRoot(): string {
@@ -53,316 +49,31 @@ function findTemplatesRoot(): string {
 
 const PROJECT_ROOT = findTemplatesRoot();
 
-// Helper to fetch .obsidian config from a git repo
-async function fetchObsidianConfig(repoUrl: string): Promise<{
-  config: any;
-  hotkeys: any;
-  plugins: string[];
-  themes: string[];
-  snippets: string[];
-  error?: string;
-}> {
-  const tempDir = path.join(os.tmpdir(), `obsidian-config-${Date.now()}`);
-
-  try {
-    // Clone the repo (shallow clone for speed)
-    await execAsync(`git clone --depth 1 "${repoUrl}" "${tempDir}"`);
-
-    const obsidianPath = path.join(tempDir, '.obsidian');
-
-    if (!existsSync(obsidianPath)) {
-      throw new Error('No .obsidian folder found in the repository');
-    }
-
-    // Read various config files
-    const config: any = {};
-    const configFiles = [
-      'app.json',
-      'appearance.json',
-      'core-plugins.json',
-      'community-plugins.json',
-      'hotkeys.json',
-      'workspace.json'
-    ];
-
-    for (const file of configFiles) {
-      const filePath = path.join(obsidianPath, file);
-      if (existsSync(filePath)) {
-        const content = await fs.readFile(filePath, 'utf-8');
-        config[file.replace('.json', '')] = JSON.parse(content);
-      }
-    }
-
-    // Get list of installed plugins
-    const pluginsPath = path.join(obsidianPath, 'plugins');
-    let plugins: string[] = [];
-    if (existsSync(pluginsPath)) {
-      plugins = await fs.readdir(pluginsPath);
-    }
-
-    // Get themes
-    const themesPath = path.join(obsidianPath, 'themes');
-    let themes: string[] = [];
-    if (existsSync(themesPath)) {
-      const themeFiles = await fs.readdir(themesPath);
-      themes = themeFiles.filter(f => f.endsWith('.css')).map(f => f.replace('.css', ''));
-    }
-
-    // Get snippets
-    const snippetsPath = path.join(obsidianPath, 'snippets');
-    let snippets: string[] = [];
-    if (existsSync(snippetsPath)) {
-      snippets = await fs.readdir(snippetsPath);
-    }
-
-    // Clean up temp directory
-    await fs.rm(tempDir, { recursive: true, force: true });
-
-    return {
-      config,
-      hotkeys: config.hotkeys || {},
-      plugins,
-      themes,
-      snippets
-    };
-  } catch (error: any) {
-    // Clean up temp directory on error
-    try {
-      await fs.rm(tempDir, { recursive: true, force: true });
-    } catch {}
-
-    return {
-      config: {},
-      hotkeys: {},
-      plugins: [],
-      themes: [],
-      snippets: [],
-      error: error.message
-    };
-  }
-}
-
-// Analyze hotkeys and workflows from a config
-function analyzeHotkeysAndWorkflows(config: any): {
-  hotkeys: Array<{ command: string; keys: string; description: string }>;
-  workflows: Array<{ name: string; description: string; steps: string[] }>;
-  recommendations: string[];
-} {
-  const hotkeys: Array<{ command: string; keys: string; description: string }> = [];
-  const workflows: Array<{ name: string; description: string; steps: string[] }> = [];
-  const recommendations: string[] = [];
-
-  // Analyze hotkeys
-  if (config.hotkeys) {
-    for (const [command, settings] of Object.entries(config.hotkeys)) {
-      if (settings && typeof settings === 'object') {
-        const hotkeySettings = settings as any;
-        if (hotkeySettings.length > 0) {
-          const modifiers = hotkeySettings[0].modifiers || [];
-          const key = hotkeySettings[0].key || '';
-          const keys = [...modifiers, key].join('+');
-
-          // Generate human-readable description
-          let description = command.replace(/:/g, ' - ').replace(/-/g, ' ');
-          hotkeys.push({ command, keys, description });
-        }
-      }
-    }
-  }
-
-  // Detect common workflows based on plugins and settings
-  const plugins = config['community-plugins'] || [];
-  const corePlugins = config['core-plugins'] || {};
-
-  // Daily notes workflow
-  if (corePlugins['daily-notes']) {
-    workflows.push({
-      name: 'Daily Notes Workflow',
-      description: 'Daily journaling and task management',
-      steps: [
-        'Create daily note with configured template',
-        'Review yesterday\'s tasks',
-        'Plan today\'s activities',
-        'Link to relevant projects/notes'
-      ]
-    });
-  }
-
-  // Zettelkasten workflow
-  if (plugins.includes('obsidian-zettelkasten-plugin') ||
-      plugins.includes('obsidian-citation-plugin')) {
-    workflows.push({
-      name: 'Zettelkasten Workflow',
-      description: 'Academic note-taking with atomic notes',
-      steps: [
-        'Create atomic notes with unique IDs',
-        'Link notes bidirectionally',
-        'Build index/structure notes',
-        'Regular review for emergence'
-      ]
-    });
-  }
-
-  // Task management workflow
-  if (plugins.includes('obsidian-tasks-plugin') ||
-      plugins.includes('obsidian-kanban')) {
-    workflows.push({
-      name: 'Task Management Workflow',
-      description: 'GTD-style task and project management',
-      steps: [
-        'Capture tasks in daily notes',
-        'Process into project files',
-        'Review in kanban boards',
-        'Archive completed items'
-      ]
-    });
-  }
-
-  // Generate recommendations
-  if (hotkeys.length < 5) {
-    recommendations.push('Consider setting up more hotkeys for frequently used commands');
-  }
-
-  if (!plugins.includes('templater-obsidian') && !plugins.includes('quickadd')) {
-    recommendations.push('Install Templater or QuickAdd for powerful note templates');
-  }
-
-  if (!corePlugins['graph']) {
-    recommendations.push('Enable the Graph view to visualize note connections');
-  }
-
-  return { hotkeys, workflows, recommendations };
-}
-
-// Merge external config with base template
-async function mergeConfigWithTemplate(
-  externalConfig: any,
-  baseTemplate: string,
-  vaultPath: string
-): Promise<void> {
-  const obsidianPath = path.join(vaultPath, '.obsidian');
-
-  // Start with base template config
-  await createObsidianConfig(obsidianPath, baseTemplate);
-
-  // Merge hotkeys
-  if (externalConfig.hotkeys) {
-    const hotkeysPath = path.join(obsidianPath, 'hotkeys.json');
-    let existingHotkeys = {};
-
-    if (existsSync(hotkeysPath)) {
-      const content = await fs.readFile(hotkeysPath, 'utf-8');
-      existingHotkeys = JSON.parse(content);
-    }
-
-    // Merge external hotkeys with existing ones
-    const mergedHotkeys = { ...existingHotkeys, ...externalConfig.hotkeys };
-    await fs.writeFile(hotkeysPath, JSON.stringify(mergedHotkeys, null, 2));
-  }
-
-  // Merge app settings
-  if (externalConfig.app) {
-    const appPath = path.join(obsidianPath, 'app.json');
-    let existingApp = {};
-
-    if (existsSync(appPath)) {
-      const content = await fs.readFile(appPath, 'utf-8');
-      existingApp = JSON.parse(content);
-    }
-
-    // Selective merge of app settings
-    const mergedApp: any = {
-      ...existingApp,
-      ...externalConfig.app,
-      // Preserve local paths
-      attachmentFolderPath: (existingApp as any).attachmentFolderPath || externalConfig.app.attachmentFolderPath
-    };
-
-    await fs.writeFile(appPath, JSON.stringify(mergedApp, null, 2));
-  }
-
-  // Add community plugins list (but don't copy plugin data)
-  if (externalConfig['community-plugins']) {
-    await fs.writeFile(
-      path.join(obsidianPath, 'community-plugins.json'),
-      JSON.stringify(externalConfig['community-plugins'], null, 2)
-    );
-  }
-}
-
 // Vault template definitions
 const VAULT_TEMPLATES: Record<string, any> = {
   minimal: {
     name: "Minimal Starter",
     description: "Clean start with basic folder structure",
-    folders: ["notes", "daily", "attachments", "Readwise"],
-    features: ["Simple daily notes", "Basic folder organization", "Readwise integration"],
+    folders: ["notes", "daily", "attachments"],
+    features: ["Simple daily notes", "Basic folder organization"],
+  },
+  para: {
+    name: "PARA Method",
+    description: "Projects, Areas, Resources, Archive - for productivity",
+    folders: ["1-Projects", "2-Areas", "3-Resources", "4-Archive", "daily-notes", "templates", "attachments"],
+    features: ["PARA organization", "Project tracking", "Daily notes", "Weekly reviews"],
   },
   pkm: {
     name: "Personal Knowledge Management",
-    description: "PARA method with MOCs and linked notes",
-    folders: ["1-Projects", "2-Areas", "3-Resources", "4-Archive", "daily-notes", "templates", "attachments", "Readwise/Books", "Readwise/Articles", "Readwise/Podcasts"],
-    features: ["PARA method", "Maps of Content", "Daily notes", "Weekly reviews", "Readwise sync"],
-  },
-  research: {
-    name: "Academic Research",
-    description: "Literature notes, citations, and thesis management",
-    folders: ["literature-notes", "permanent-notes", "projects", "bibliography", "drafts", "attachments"],
-    features: ["Zettelkasten-style notes", "Citation management", "Literature reviews", "Academic writing"],
+    description: "Learning-focused with MOCs and progressive summarization",
+    folders: ["MOCs", "Sources", "Ideas", "Projects", "daily-notes", "templates", "attachments"],
+    features: ["Maps of Content", "Progressive summarization", "Daily notes", "Idea development"],
   },
   zettelkasten: {
     name: "Zettelkasten",
-    description: "Atomic notes with unique IDs and emergence tracking",
+    description: "Atomic notes with unique IDs for academic research",
     folders: ["fleeting", "literature", "permanent", "index", "attachments"],
     features: ["Unique note IDs", "Atomic notes", "Strict linking", "Emergence patterns"],
-  },
-  project: {
-    name: "Project Management",
-    description: "Tasks, sprints, and team collaboration",
-    folders: ["projects", "tasks", "meetings", "documentation", "reviews", "templates", "attachments"],
-    features: ["Kanban boards", "Sprint planning", "Meeting notes", "Project dashboards"],
-  },
-  journaling: {
-    name: "Daily Journaling",
-    description: "Reflection, gratitude, and personal growth",
-    folders: ["journal", "gratitude", "goals", "reflections", "dreams", "attachments"],
-    features: ["Daily prompts", "Mood tracking", "Goal setting", "Weekly reviews"],
-  },
-  technical: {
-    name: "Technical Documentation",
-    description: "API docs, architecture, and code snippets",
-    folders: ["apis", "architecture", "guides", "troubleshooting", "changelog", "snippets", "diagrams", "attachments"],
-    features: ["Code blocks", "Mermaid diagrams", "API references", "Architecture decisions"],
-  },
-  creative: {
-    name: "Creative Writing",
-    description: "Characters, worldbuilding, and story drafts",
-    folders: ["characters", "worldbuilding", "scenes", "drafts", "research", "ideas", "attachments"],
-    features: ["Character sheets", "World maps", "Scene tracking", "Story structure"],
-  },
-  gtd: {
-    name: "Getting Things Done",
-    description: "GTD methodology with contexts and reviews",
-    folders: ["inbox", "next-actions", "projects", "waiting-for", "someday-maybe", "reference", "attachments"],
-    features: ["GTD workflow", "Context tags", "Weekly reviews", "Quick capture"],
-  },
-  business: {
-    name: "Business/Startup",
-    description: "Strategy, customers, and metrics tracking",
-    folders: ["strategy", "customers", "competitors", "metrics", "meetings", "ideas", "attachments"],
-    features: ["Business model canvas", "Customer interviews", "KPI tracking", "Competitive analysis"],
-  },
-  content: {
-    name: "Content Creation",
-    description: "Blog posts, videos, and content calendar",
-    folders: ["ideas", "drafts", "published", "research", "assets", "calendar", "attachments"],
-    features: ["Content pipeline", "Editorial calendar", "SEO optimization", "Publishing workflow"],
-  },
-  learning: {
-    name: "Learning & Study",
-    description: "Courses, flashcards, and knowledge testing",
-    folders: ["courses", "flashcards", "practice", "resources", "progress", "notes", "attachments"],
-    features: ["Spaced repetition", "Course notes", "Practice problems", "Progress tracking"],
   },
 };
 
@@ -406,10 +117,12 @@ Inactive items from the other categories.`,
 ## Reflection
 `,
   },
-  research: {
-    "literature-notes/README.md": `# Literature Notes
+  zettelkasten: {
+    "fleeting/README.md": `# Fleeting Notes
+Quick captures and temporary thoughts to be processed later.`,
+    "literature/README.md": `# Literature Notes
 Notes from books, papers, and articles. One source per note.`,
-    "permanent-notes/README.md": `# Permanent Notes
+    "permanent/README.md": `# Permanent Notes
 Your own insights, written in your own words, atomic and self-contained.`,
     "templates/literature-note.md": `# {{title}}
 
@@ -1189,54 +902,9 @@ const listTemplatesTool: Tool = {
   },
 };
 
-// Tool: Analyze external config
-const analyzeConfigTool: Tool = {
-  name: "analyze_config",
-  description: "Analyze an Obsidian config from a git repository URL",
-  inputSchema: {
-    type: "object",
-    properties: {
-      url: {
-        type: "string",
-        description: "Git repository URL containing .obsidian folder",
-      },
-    },
-    required: ["url"],
-  },
-};
-
-// Tool: Adopt external config
-const adoptConfigTool: Tool = {
-  name: "adopt_config",
-  description: "Create a vault adopting config from a git repository",
-  inputSchema: {
-    type: "object",
-    properties: {
-      url: {
-        type: "string",
-        description: "Git repository URL containing .obsidian folder",
-      },
-      name: {
-        type: "string",
-        description: "Name for the new vault",
-      },
-      path: {
-        type: "string",
-        description: "Path where the vault should be created (optional)",
-      },
-      baseTemplate: {
-        type: "string",
-        enum: Object.keys(VAULT_TEMPLATES),
-        description: "Base template to merge with (optional, defaults to minimal)",
-      },
-    },
-    required: ["url", "name"],
-  },
-};
-
 // Register tools
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
-  tools: [createVaultTool, listTemplatesTool, analyzeConfigTool, adoptConfigTool],
+  tools: [createVaultTool, listTemplatesTool],
 }));
 
 // Handle tool calls
@@ -1412,109 +1080,6 @@ Your vault is ready! Open it in Obsidian to start building your knowledge system
       };
     }
 
-    case "analyze_config": {
-      const { url } = args as any;
-      const result = await fetchObsidianConfig(url);
-
-      if (result.error) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error fetching config: ${result.error}`,
-            },
-          ],
-        };
-      }
-
-      const analysis = analyzeHotkeysAndWorkflows(result.config);
-
-      let output = `# Obsidian Config Analysis\n\n`;
-      output += `## Plugins\n`;
-      output += `- **Community Plugins:** ${result.plugins.join(', ') || 'None'}\n`;
-      output += `- **Themes:** ${result.themes.join(', ') || 'None'}\n`;
-      output += `- **Snippets:** ${result.snippets.join(', ') || 'None'}\n\n`;
-
-      output += `## Key Hotkeys\n`;
-      if (analysis.hotkeys.length > 0) {
-        analysis.hotkeys.slice(0, 10).forEach(h => {
-          output += `- **${h.keys}**: ${h.description}\n`;
-        });
-      } else {
-        output += `No custom hotkeys configured\n`;
-      }
-
-      output += `\n## Detected Workflows\n`;
-      analysis.workflows.forEach(w => {
-        output += `### ${w.name}\n${w.description}\n`;
-        w.steps.forEach(s => output += `- ${s}\n`);
-      });
-
-      if (analysis.recommendations.length > 0) {
-        output += `\n## Recommendations\n`;
-        analysis.recommendations.forEach(r => output += `- ${r}\n`);
-      }
-
-      return {
-        content: [
-          {
-            type: "text",
-            text: output,
-          },
-        ],
-      };
-    }
-
-    case "adopt_config": {
-      const { url, name: vaultName, path: vaultPath, baseTemplate = "minimal" } = args as any;
-
-      // Fetch external config
-      const result = await fetchObsidianConfig(url);
-      if (result.error) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error fetching config: ${result.error}`,
-            },
-          ],
-        };
-      }
-
-      // Determine vault path
-      let expandedPath = vaultPath;
-      if (!expandedPath || expandedPath === '') {
-        expandedPath = path.join(os.homedir(), 'Documents', 'Obsidian');
-      }
-      if (expandedPath.startsWith('~')) {
-        expandedPath = expandedPath.replace(/^~/, os.homedir());
-      }
-      if (!expandedPath.startsWith('/') && !expandedPath.startsWith('C:') && !expandedPath.includes(':')) {
-        expandedPath = path.join(os.homedir(), expandedPath);
-      }
-
-      const finalPath = path.join(expandedPath, vaultName);
-
-      // Create vault with base template
-      await fs.mkdir(finalPath, { recursive: true });
-      const template = VAULT_TEMPLATES[baseTemplate];
-      for (const folder of template.folders) {
-        await fs.mkdir(path.join(finalPath, folder), { recursive: true });
-      }
-
-      // Merge configurations
-      await mergeConfigWithTemplate(result.config, baseTemplate, finalPath);
-
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Vault "${vaultName}" created at ${finalPath} with config adopted from ${url}`,
-          },
-        ],
-      };
-    }
-
     default:
       return {
         content: [
@@ -1547,71 +1112,90 @@ server.setRequestHandler(ListPromptsRequestSchema, async () => ({
 // Handle prompt requests
 server.setRequestHandler(GetPromptRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
-  
+
   if (name === "bootstrap_vault") {
     // Get the actual user's Documents path
     const defaultLocation = path.join(os.homedir(), 'Documents', 'Obsidian');
     const location = args?.location || defaultLocation;
-    
+
     const messages: PromptMessage[] = [
       {
         role: "assistant",
         content: {
           type: "text",
-          text: `# 🎯 Obsidian Vault Bootstrap Wizard
+          text: `# 🎯 Obsidian Vault Bootstrap & Migration Assistant
 
-Welcome! I'll help you create a perfectly configured Obsidian vault. Let me show you the available templates and guide you through the setup.
+I'll help you create a new Obsidian vault or migrate an existing configuration.
 
-## Available Vault Templates:
+## Option 1: Fresh Start with Templates 📚
 
-${Object.entries(VAULT_TEMPLATES).map(([key, template]) => 
-  `### ${template.name} (\`${key}\`)
-${template.description}
-**Features:** ${template.features.join(", ")}
-`).join("\n")}
+**Quick Presets:**
+- **minimal** - Clean start with basic folders
+- **para** - Projects, Areas, Resources, Archive method
+- **pkm** - Personal Knowledge Management with MOCs
+- **zettelkasten** - Academic note-taking with atomic notes
 
-## Let's Create Your Vault!
+**Example:** "Create a PKM vault called Second-Brain"
 
-To get started, I need to know:
-1. **Which template would you like?** (or we can combine features from multiple templates)
-2. **What will you name your vault?**
-3. **Where should I create it?** (default: ${location})
+## Option 2: Migrate from GitHub Repo 🔄
 
-### Quick Start Examples:
+**Share a GitHub URL with a .obsidian folder and I'll:**
+1. Clone and analyze the configuration
+2. Explain the key hotkeys and workflows
+3. Guide you through recreating the setup
+4. Help you understand the system
 
-**For a research vault:**
+**Example:** "Help me migrate from https://github.com/kepano/obsidian-minimal"
+
+---
+
+## For AI Agent: Migration Instructions
+
+When user provides a GitHub URL:
+
+### 1. Clone and Analyze
+\`\`\`bash
+# Clone the repo to temp directory
+git clone --depth 1 [REPO_URL] /tmp/obsidian-analysis
+
+# Check for .obsidian folder
+ls -la /tmp/obsidian-analysis/.obsidian/
+
+# List plugins
+ls /tmp/obsidian-analysis/.obsidian/plugins/
+
+# Check key config files
+cat /tmp/obsidian-analysis/.obsidian/app.json
+cat /tmp/obsidian-analysis/.obsidian/hotkeys.json
+cat /tmp/obsidian-analysis/.obsidian/community-plugins.json
 \`\`\`
-Create a research vault called "PhD-Research" in ~/Documents/Obsidian
+
+### 2. Create New Vault
+\`\`\`bash
+# Use create_vault tool for base structure
+# Then manually copy configs
+
+# Copy .obsidian folder (excluding plugins data)
+cp -r /tmp/obsidian-analysis/.obsidian [NEW_VAULT_PATH]/
+rm -rf [NEW_VAULT_PATH]/.obsidian/plugins/*/
+
+# Just keep plugin manifests
+find /tmp/obsidian-analysis/.obsidian/plugins -name "manifest.json" -exec sh -c 'mkdir -p [NEW_VAULT_PATH]/.obsidian/plugins/$(basename $(dirname {})) && cp {} [NEW_VAULT_PATH]/.obsidian/plugins/$(basename $(dirname {}))/' \\;
 \`\`\`
 
-**For a personal knowledge management system:**
-\`\`\`
-Set up a PKM vault named "Second-Brain" with Zettelkasten features
-\`\`\`
+### 3. Explain Key Features
+- Parse hotkeys.json and explain important shortcuts
+- List community plugins and their purposes
+- Identify workflow patterns (daily notes, zettelkasten, etc.)
+- Note any custom CSS or themes
 
-**For a minimal start:**
-\`\`\`
-Create a minimal vault called "Notes" on my Desktop
-\`\`\`
+### 4. Guide Setup
+- List plugins to install from Obsidian Community Plugins
+- Explain folder structure and organization system
+- Highlight important settings to configure
+- Suggest starting points for the user
 
-### Advanced Customization:
-
-I can also:
-- Combine features from multiple templates
-- Add custom folder structures
-- Configure specific plugins
-- Create custom templates for your notes
-- Set up automation with Templater
-- Configure hotkeys for your workflow
-
-**Tip:** After creation, I can help you:
-- Import existing notes
-- Set up sync with Git
-- Configure advanced plugins
-- Create custom CSS snippets
-- Build dataview queries
-
-What kind of Obsidian vault would you like to create today?`,
+Remember: Don't overcomplicate! Use basic bash commands and explain what you're doing.`,
         },
       },
     ];
