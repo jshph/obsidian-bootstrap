@@ -1,0 +1,11 @@
+{
+  "id": "calendar",
+  "name": "Calendar",
+  "version": "1.5.10",
+  "minAppVersion": "0.9.11",
+  "description": "Calendar view of your daily notes",
+  "author": "Liam Cain",
+  "authorUrl": "https://github.com/liamcain",
+  "helpUrl": "https://github.com/liamcain/obsidian-calendar-plugin",
+  "isDesktopOnly": false
+}

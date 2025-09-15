@@ -1,0 +1,56 @@
+{
+  "command_timeout": 5,
+  "templates_folder": "templates",
+  "templates_pairs": [
+    ["", ""],
+    ["daily-notes", "templates/daily-note.md"],
+    ["meetings", "templates/meeting.md"],
+    ["projects", "templates/project.md"],
+    ["literature-notes", "templates/literature-note.md"]
+  ],
+  "trigger_on_file_creation": true,
+  "auto_jump_to_cursor": true,
+  "enable_system_commands": false,
+  "shell_path": "",
+  "user_scripts_folder": "templates/scripts",
+  "enable_folder_templates": true,
+  "folder_templates": [
+    {
+      "folder": "daily-notes",
+      "template": "templates/daily-note.md"
+    },
+    {
+      "folder": "meetings",
+      "template": "templates/meeting.md"
+    },
+    {
+      "folder": "projects",
+      "template": "templates/project.md"
+    }
+  ],
+  "syntax_highlighting": true,
+  "enabled_templates_hotkeys": [
+    {
+      "template": "templates/daily-note.md",
+      "hotkey": {
+        "modifiers": ["Mod", "Shift"],
+        "key": "d"
+      }
+    },
+    {
+      "template": "templates/meeting.md",
+      "hotkey": {
+        "modifiers": ["Mod", "Shift"],
+        "key": "m"
+      }
+    },
+    {
+      "template": "templates/project.md",
+      "hotkey": {
+        "modifiers": ["Mod", "Shift"],
+        "key": "p"
+      }
+    }
+  ],
+  "startup_templates": [""]
+}

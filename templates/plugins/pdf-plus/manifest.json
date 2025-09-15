@@ -1,0 +1,11 @@
+{
+  "id": "pdf-plus",
+  "name": "PDF++",
+  "version": "0.41.0",
+  "minAppVersion": "1.4.4",
+  "description": "The most Obsidian-native PDF reader",
+  "author": "Ryota Ushio",
+  "authorUrl": "https://github.com/RyotaUshio",
+  "helpUrl": "https://github.com/RyotaUshio/obsidian-pdf-plus",
+  "isDesktopOnly": true
+}

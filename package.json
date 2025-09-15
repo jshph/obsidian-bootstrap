@@ -1,0 +1,27 @@
+{
+  "name": "obsidian-vault-bootstrap",
+  "version": "1.0.0",
+  "description": "MCP server for bootstrapping Obsidian vaults with templates",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "dev": "bun --watch src/index.ts",
+    "build": "bun build src/index.ts --compile --outfile dist/obsidian-bootstrap"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^20.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.4",
+    "zod": "^4.0.17"
+  },
+  "keywords": ["mcp", "obsidian", "vault", "template", "bootstrap"],
+  "author": "",
+  "license": "MIT"
+}

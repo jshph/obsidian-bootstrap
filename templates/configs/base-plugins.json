@@ -1,0 +1,86 @@
+{
+  "minimal": [
+    "readwise-official"
+  ],
+  "pkm": [
+    "dataview",
+    "templater-obsidian",
+    "calendar",
+    "quickadd",
+    "obsidian-tasks-plugin",
+    "readwise-official"
+  ],
+  "research": [
+    "dataview",
+    "obsidian-citation-plugin",
+    "obsidian-annotator",
+    "pdf-plus",
+    "templater-obsidian",
+    "obsidian-zotero-integration",
+    "readwise-official"
+  ],
+  "zettelkasten": [
+    "dataview",
+    "templater-obsidian",
+    "obsidian-unique-note-creator",
+    "graph-analysis",
+    "readwise-official"
+  ],
+  "project": [
+    "obsidian-tasks-plugin",
+    "obsidian-kanban",
+    "obsidian-projects",
+    "dataview",
+    "templater-obsidian"
+  ],
+  "journaling": [
+    "calendar",
+    "periodic-notes",
+    "templater-obsidian",
+    "obsidian-tracker",
+    "readwise-official"
+  ],
+  "technical": [
+    "obsidian-code-block-copy",
+    "obsidian-mermaid",
+    "obsidian-excalidraw-plugin",
+    "dataview",
+    "readwise-official"
+  ],
+  "creative": [
+    "obsidian-longform",
+    "templater-obsidian",
+    "obsidian-word-count",
+    "fantasy-calendar",
+    "readwise-official"
+  ],
+  "gtd": [
+    "obsidian-tasks-plugin",
+    "quickadd",
+    "templater-obsidian",
+    "dataview",
+    "readwise-official"
+  ],
+  "business": [
+    "obsidian-kanban",
+    "dataview",
+    "obsidian-charts",
+    "templater-obsidian",
+    "obsidian-canvas-conversation",
+    "readwise-official"
+  ],
+  "content": [
+    "templater-obsidian",
+    "obsidian-publish-helper",
+    "calendar",
+    "dataview",
+    "readwise-official"
+  ],
+  "learning": [
+    "obsidian-spaced-repetition",
+    "dataview",
+    "templater-obsidian",
+    "obsidian-mind-map",
+    "readwise-official"
+  ]
+}
