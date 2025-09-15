@@ -16,7 +16,7 @@ An MCP (Model Context Protocol) server that exposes a single prompt to help you 
 Run this one-liner to automatically install the obsidian-bootstrap MCP server:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jshph/obsidian-bootstrap/master/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/jshph/obsidian-bootstrap/master/setup.sh | sh
 ```
 
 This will:
