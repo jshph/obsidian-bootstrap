@@ -1,4 +1,0 @@
-quotes
-
-{{title}}
-
