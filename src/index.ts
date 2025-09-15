@@ -140,11 +140,13 @@ else
     # Common folders from vault templates:
     mkdir -p ${location}/[VAULT_NAME]/{inbox,projects,areas,resources,archive,templates,attachments}
 
-    # Copy .obsidian folder (including full plugin folders)
+    # Copy entire .obsidian folder with all configurations, plugins, themes, etc.
+    echo "📁 Copying complete .obsidian configuration (plugins, themes, settings)..."
     cp -r ./temp-obsidian-analysis/.obsidian ${location}/[VAULT_NAME]/
 
-    # Copy templates folder to vault root if it exists
+    # Copy templates folder to vault root if it exists (separate from .obsidian)
     if [ -d "./temp-obsidian-analysis/templates" ]; then
+        echo "📄 Copying templates folder..."
         cp -r ./temp-obsidian-analysis/templates ${location}/[VAULT_NAME]/
     fi
 
@@ -155,6 +157,42 @@ else
     rm -f ${location}/[VAULT_NAME]/.obsidian/workspace.json
     rm -f ${location}/[VAULT_NAME]/.obsidian/workspace-mobile.json
     rm -f ${location}/[VAULT_NAME]/.obsidian/workspaces.json
+
+    # Verify what was actually copied
+    echo ""
+    echo "✅ Vault created successfully at ${location}/[VAULT_NAME]"
+    echo ""
+    echo "📊 Configuration Summary:"
+
+    # Count plugins
+    if [ -d "${location}/[VAULT_NAME]/.obsidian/plugins" ]; then
+        PLUGIN_COUNT=$(ls -1 ${location}/[VAULT_NAME]/.obsidian/plugins 2>/dev/null | wc -l)
+        echo "  • Plugins installed: $PLUGIN_COUNT"
+        ls ${location}/[VAULT_NAME]/.obsidian/plugins/ | head -5 | sed 's/^/    - /'
+        if [ $PLUGIN_COUNT -gt 5 ]; then
+            echo "    ... and $((PLUGIN_COUNT - 5)) more"
+        fi
+    fi
+
+    # Count themes
+    if [ -d "${location}/[VAULT_NAME]/.obsidian/themes" ]; then
+        THEME_COUNT=$(ls -1 ${location}/[VAULT_NAME]/.obsidian/themes 2>/dev/null | wc -l)
+        if [ $THEME_COUNT -gt 0 ]; then
+            echo "  • Themes available: $THEME_COUNT"
+        fi
+    fi
+
+    # Check for templates
+    if [ -d "${location}/[VAULT_NAME]/templates" ]; then
+        TEMPLATE_COUNT=$(find ${location}/[VAULT_NAME]/templates -name "*.md" 2>/dev/null | wc -l)
+        if [ $TEMPLATE_COUNT -gt 0 ]; then
+            echo "  • Templates available: $TEMPLATE_COUNT"
+        fi
+    fi
+
+    # List created folders
+    echo "  • Folders created:"
+    ls -d ${location}/[VAULT_NAME]/*/ 2>/dev/null | grep -v ".obsidian" | head -5 | xargs -n1 basename | sed 's/^/    - /'
 fi
 
 # Create a Getting Started guide for the user
@@ -311,11 +349,13 @@ else
     # Common folders from vault templates:
     mkdir -p [NEW_VAULT_PATH]/{inbox,projects,areas,resources,archive,templates,attachments}
 
-    # Copy .obsidian folder (including full plugin folders)
+    # Copy entire .obsidian folder with all configurations, plugins, themes, etc.
+    echo "📁 Copying complete .obsidian configuration (plugins, themes, settings)..."
     cp -r ./temp-obsidian-analysis/.obsidian [NEW_VAULT_PATH]/
 
-    # Copy templates folder to vault root if it exists
+    # Copy templates folder to vault root if it exists (separate from .obsidian)
     if [ -d "./temp-obsidian-analysis/templates" ]; then
+        echo "📄 Copying templates folder..."
         cp -r ./temp-obsidian-analysis/templates [NEW_VAULT_PATH]/
     fi
 
@@ -326,6 +366,42 @@ else
     rm -f [NEW_VAULT_PATH]/.obsidian/workspace.json
     rm -f [NEW_VAULT_PATH]/.obsidian/workspace-mobile.json
     rm -f [NEW_VAULT_PATH]/.obsidian/workspaces.json
+
+    # Verify what was actually copied
+    echo ""
+    echo "✅ Vault created successfully at [NEW_VAULT_PATH]"
+    echo ""
+    echo "📊 Configuration Summary:"
+
+    # Count plugins
+    if [ -d "[NEW_VAULT_PATH]/.obsidian/plugins" ]; then
+        PLUGIN_COUNT=$(ls -1 [NEW_VAULT_PATH]/.obsidian/plugins 2>/dev/null | wc -l)
+        echo "  • Plugins installed: $PLUGIN_COUNT"
+        ls [NEW_VAULT_PATH]/.obsidian/plugins/ | head -5 | sed 's/^/    - /'
+        if [ $PLUGIN_COUNT -gt 5 ]; then
+            echo "    ... and $((PLUGIN_COUNT - 5)) more"
+        fi
+    fi
+
+    # Count themes
+    if [ -d "[NEW_VAULT_PATH]/.obsidian/themes" ]; then
+        THEME_COUNT=$(ls -1 [NEW_VAULT_PATH]/.obsidian/themes 2>/dev/null | wc -l)
+        if [ $THEME_COUNT -gt 0 ]; then
+            echo "  • Themes available: $THEME_COUNT"
+        fi
+    fi
+
+    # Check for templates
+    if [ -d "[NEW_VAULT_PATH]/templates" ]; then
+        TEMPLATE_COUNT=$(find [NEW_VAULT_PATH]/templates -name "*.md" 2>/dev/null | wc -l)
+        if [ $TEMPLATE_COUNT -gt 0 ]; then
+            echo "  • Templates available: $TEMPLATE_COUNT"
+        fi
+    fi
+
+    # List created folders
+    echo "  • Folders created:"
+    ls -d [NEW_VAULT_PATH]/*/ 2>/dev/null | grep -v ".obsidian" | head -5 | xargs -n1 basename | sed 's/^/    - /'
 fi
 
 # Create a Getting Started guide for the user

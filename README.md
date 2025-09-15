@@ -61,86 +61,29 @@ bun run build
 
 Outputs `dist/obsidian-bootstrap` (no extra template files required).
 
-#### Option 3: Development mode
-
-Run with Bun:
-
-```json
-{
-  "mcpServers": {
-    "obsidian-bootstrap": {
-      "command": "bun",
-      "args": ["run", "/path/to/bootstrap-vault/src/index.ts"]
-    }
-  }
-}
-```
-
 </details>
 
 ## Usage
 
-You can directly bootstrap a vault from the command line:
+### Quick Start (Recommended)
 
-```bash
-# Use default configuration (https://github.com/jshph/.obsidian)
-claude --prompt obsidian-bootstrap:bootstrap_vault
+1. Open Claude in interactive mode:
+   ```bash
+   claude
+   ```
 
-# Specify custom location
-claude --prompt obsidian-bootstrap:bootstrap_vault location="~/Documents/MyVault"
+2. In Claude, type:
+   ```
+   /obsidian-bootstrap:bootstrap_vault (MCP)
+   ```
 
-# Use a different GitHub config
-claude --prompt obsidian-bootstrap:bootstrap_vault github_repo="https://github.com/your/config"
+3. Follow the prompts to:
+   - Create a vault with the default configuration
+   - Choose from preset templates (minimal, PARA, PKM, Zettelkasten)
+   - Migrate from your own GitHub repository
 
-# Both custom location and repo
-claude --prompt obsidian-bootstrap:bootstrap_vault location="~/Vaults/Work" github_repo="https://github.com/your/config"
+That's it! Claude will handle the rest.
 ```
-
-### How it works
-
-- Use the CLI to invoke the prompt directly, or ask Claude to use the `bootstrap_vault` prompt:
-  - "Create a PKM vault called Second-Brain in ~/Documents"
-  - "Help me migrate from https://github.com/jshph/.obsidian"
-- The server returns a structured prompt; Claude then generates and runs bash commands on your machine (with your confirmation). You can approve/decline each step.
-
-### Example: Create a PKM vault (run by Claude)
-
-```bash
-VAULT_PATH=~/Documents/Obsidian/Second-Brain
-mkdir -p "$VAULT_PATH/.obsidian"
-mkdir -p "$VAULT_PATH"/{MOCs,Sources,Ideas,Projects,daily-notes,templates,attachments}
-
-cat > "$VAULT_PATH/.obsidian/app.json" << 'EOF'
-{
-  "attachmentFolderPath": "attachments",
-  "alwaysUpdateLinks": true,
-  "showLineNumber": true,
-  "defaultViewMode": "source"
-}
-EOF
-```
-
-### Example: Migrate from a GitHub repo (run by Claude)
-
-```bash
-git clone --depth 1 https://github.com/OWNER/REPO /tmp/obsidian-analysis
-ls -la /tmp/obsidian-analysis/.obsidian/
-
-# Copy core configs (manifests only for plugins)
-NEW_VAULT_PATH=~/Documents/Obsidian/MyMigratedVault
-mkdir -p "$NEW_VAULT_PATH/.obsidian/plugins"
-cp -r /tmp/obsidian-analysis/.obsidian "$NEW_VAULT_PATH/"
-rm -rf "$NEW_VAULT_PATH/.obsidian/plugins"/*/
-find /tmp/obsidian-analysis/.obsidian/plugins -name "manifest.json" -exec sh -c \
-  'mkdir -p "$NEW_VAULT_PATH/.obsidian/plugins/$(basename $(dirname {}))" && \
-   cp {} "$NEW_VAULT_PATH/.obsidian/plugins/$(basename $(dirname {}))"' \;
-```
-
-## Notes
-
-- The MCP server itself does not execute commands; Claude runs the bash it generates in your shell with your approval.
-- No MCP tools are exposed — only the `bootstrap_vault` prompt.
-- Templates define suggested folders only; you choose any plugins inside Obsidian.
 
 ## Development
 
@@ -155,6 +98,3 @@ bun run build
 ## License
 
 MIT
-
----
-Built with Bun. This project ships a prompts-only MCP server per SIMPLIFICATION_NOTES.md.

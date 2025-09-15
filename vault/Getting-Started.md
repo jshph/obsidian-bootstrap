@@ -1,102 +1,73 @@
-# Getting Started with Your Migrated Vault
+# 🚀 Getting Started with Your New Vault
 
-This vault has been updated with the latest configuration from https://github.com/jshph/.obsidian (updated: Sep 15, 2025). Welcome to your personal knowledge management system configured with a proven workflow for capturing, organizing, and connecting your thoughts.
+Welcome to your freshly configured Obsidian vault! This setup includes a carefully curated configuration focused on Personal Knowledge Management (PKM), daily notes, and task management.
 
 ## 📁 Folder Structure
 
-- **inbox/** - Quick capture for new notes (timestamped entries)
-- **daily/** - Daily notes for journaling and task tracking
+Your vault is organized with these folders:
+- **inbox/** - Quick capture for new notes (timestamped)
+- **daily/** - Daily notes and journals
 - **projects/** - Active projects and initiatives
-- **MOCs/** - Maps of Content for topic overviews
-- **archive/** - Completed or inactive items
+- **MOCs/** - Maps of Content (index/overview notes)
+- **archive/** - Completed/inactive items
 - **templates/** - Note templates for consistency
 - **attachments/** - Images, PDFs, and other files
 
-## ⌨️ Essential Hotkeys
+## ⚡ Key Hotkeys
 
-- `Cmd/Ctrl + P` - Command palette (access any command)
-- `Cmd/Ctrl + O` - Quick switcher (jump to any note)
-- `Cmd/Ctrl + N` - Create new note
-- `Cmd/Ctrl + D` - Open today's daily note
-- `Cmd/Ctrl + T` - Insert template
-- `Cmd/Ctrl + Shift + F` - Search across all notes
-- `Ctrl + P` - QuickAdd personal reflection (timestamped)
-- `Ctrl + W` - QuickAdd work note
+Essential keyboard shortcuts configured for you:
+- `Cmd/Ctrl + Shift + N` - QuickAdd: Create new note
+- `Cmd/Ctrl + T` - Create from template
+- `Cmd/Ctrl + P` - Command palette
+- `Cmd/Ctrl + O` - Quick switcher
+- `Cmd/Ctrl + Shift + F` - Search all files
 
-## 🚀 Core Workflow
+## 🔌 Installed Plugins
 
-### Daily Notes
-Start each day with a daily note. It's your home base for:
-- Morning reflections
-- Task planning
-- Meeting notes
-- End-of-day review
-
-### Quick Capture
-Use the inbox folder for quick thoughts:
-1. Create a note with timestamp (YYYY-MM-DD-HHMMSS format)
-2. Capture the idea quickly
-3. Process later into proper location
-
-### Templates
-Available templates in your vault:
-- **daily.md** - Daily note structure
-- **personal reflections.md** - Quick personal thoughts
-- **work notes.md** - Work-related captures
-- **devo template.md** - Devotional/reflection template
-- **quotes.md** - Quote capture
-
-## 🔌 Essential Plugins
-
-Your vault comes pre-configured with these power tools:
-
-### Installed & Ready
+### Core Plugins (Pre-configured):
 1. **Templater** - Advanced templating system
-2. **QuickAdd** - Quick capture workflows
-3. **Dataview** - Query and display data from notes
+2. **QuickAdd** - Quick note creation workflows
+3. **Dataview** - Query and visualize your notes
 4. **Tasks** - Task management with due dates
 5. **Calendar** - Visual daily notes navigation
 
-### To Activate
-1. Open Obsidian Settings (Cmd/Ctrl + ,)
-2. Go to "Community plugins"
-3. Enable "Restricted mode" toggle (turn it OFF)
-4. Browse and install any missing plugins from the list above
-5. Enable each plugin after installation
+### Additional Enhancements:
+- Excalidraw (visual thinking)
+- Advanced URI (automation)
+- Style Settings (theme customization)
+- And 15+ more productivity plugins!
 
-## 📝 First Steps
+## 🎨 Themes
 
-1. **Create your first daily note** - Press `Cmd/Ctrl + D`
-2. **Explore templates** - Check the templates folder
-3. **Try quick capture** - Press `Ctrl + P` for personal reflection
-4. **Set up your projects** - Create project notes in the projects folder
-5. **Build your first MOC** - Create a Map of Content for a topic you're learning
+Multiple themes are included:
+- AnuPpuccin
+- Minimal
+- Things
+- Shimmering Focus
+- And more in Settings → Appearance
+
+## 🏁 Next Steps
+
+1. **Open in Obsidian**: Open Obsidian and select "Open folder as vault", then choose the `vault` folder
+2. **Enable Community Plugins**: Settings → Community Plugins → Turn on
+3. **Review Templates**: Check the `templates/` folder for available templates
+4. **Create Your First Daily Note**: Use Calendar plugin or Cmd/Ctrl + Shift + N
+5. **Customize Settings**: Adjust appearance, hotkeys, and plugin settings to your preference
 
 ## 💡 Pro Tips
 
-- Use `[[double brackets]]` to link between notes
-- Type `#` to create tags for categorization
-- Drag images directly into notes (stored in attachments)
-- Use the graph view to visualize connections
-- Regular reviews help maintain a healthy vault
+- Use the **inbox** folder for quick captures throughout the day
+- Create a daily note each morning for planning and reflection
+- Build Maps of Content (MOCs) to organize related notes
+- Use tags and links liberally to connect ideas
+- Review and process inbox notes weekly
 
-## 🎯 Philosophy
+## 📚 Templates Available
 
-This vault follows PKM (Personal Knowledge Management) principles:
-- **Capture** everything that resonates
-- **Organize** with light structure
-- **Connect** ideas through links
-- **Create** new insights from connections
+- Daily note template
+- Meeting notes
+- Book notes
+- Project template
+- Personal reflection
 
-## 🔧 Customization
-
-Feel free to:
-- Adjust hotkeys in Settings → Hotkeys
-- Modify templates to fit your style
-- Add new plugins as needed
-- Create your own folder structure
-
-Remember: The best system is the one you'll actually use!
-
----
-*Happy note-taking! Your future self will thank you.* 🚀
+Happy note-taking! 🎉
