@@ -62,7 +62,7 @@ if [ $? -eq 0 ]; then
     echo ""
     echo "Quick Start:"
     echo ""
-    echo "Run Bootstrap Vault in Claude Code:"
+    echo "Run Bootstrap Vault in Claude Code from your markdown vault directory:"
     echo -e "   ${GREEN}claude \"/obsidian-bootstrap:bootstrap_vault (MCP)\"${NC}"
     echo ""
     echo "────────────────────────────────────────────────"
