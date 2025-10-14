@@ -78,7 +78,7 @@ I'll help you migrate your Obsidian configuration from: **${githubRepo}**
 
 Target location: **${location}**
 
-I'll now clone and analyze the repository to set up your new vault with the same configuration.
+I'll now clone and analyze the repository to understand its workflow philosophy and set up your new vault.
 
 ---
 
@@ -91,9 +91,19 @@ Migrate from ${githubRepo} to ${location}:
 # Clone the repo to a local temp directory (in current working directory)
 git clone --depth 1 ${githubRepo} ./temp-obsidian-analysis
 
-# Check for OBSIDIAN.md to understand vault structure
+# Check for OBSIDIAN.md to understand vault structure and philosophy
 if [ -f "./temp-obsidian-analysis/OBSIDIAN.md" ]; then
+    echo "📋 Found OBSIDIAN.md - analyzing vault philosophy and structure..."
     cat ./temp-obsidian-analysis/OBSIDIAN.md
+    echo ""
+    echo "🔍 OBSIDIAN.md found - agent should read this to understand vault philosophy"
+    echo ""
+    echo "🎯 Agent Instructions:"
+    echo "- Read OBSIDIAN.md completely to understand the knowledge management approach"
+    echo "- Analyze tag patterns in markdown files to identify conceptual vocabulary"
+    echo "- Examine link usage to understand knowledge connection patterns"
+    echo "- Review plugin configurations to understand workflow automation"
+    echo "- Create personalized Getting Started guide based on discovered patterns"
 fi
 
 # Check for .obsidian folder
@@ -196,98 +206,57 @@ else
 fi
 
 # Create a Getting Started guide for the user
+# IMPORTANT: Agent must replace this template with content extracted from OBSIDIAN.md
+# DO NOT use this generic template - analyze the vault and create personalized content
 cat > ${location}/[VAULT_NAME]/Getting-Started.md << 'EOF'
-# Getting Started with Your Migrated Vault
+# Getting Started with Your Vault
 
 This vault was migrated from: ${githubRepo}
 
-## Folder Structure
-- **inbox/** - Quick capture for new notes
-- **projects/** - Active projects
-- **areas/** - Ongoing responsibilities
-- **resources/** - Reference materials
-- **archive/** - Completed/inactive items
-- **templates/** - Note templates
-- **attachments/** - Images and files
+## Workflow Philosophy
 
-## Key Hotkeys
-Check Settings > Hotkeys for all configured shortcuts. Common ones:
-- Cmd/Ctrl + P: Command palette
-- Cmd/Ctrl + O: Quick switcher
-- Cmd/Ctrl + N: New note
+[AGENT: Extract and present the workflow philosophy from OBSIDIAN.md here. Use the actual language and principles from the documentation. Include key workflow patterns, tool usage, and organizational approach.]
 
-## Installed Plugins
-View Settings > Community Plugins to see what's installed.
-You may need to enable plugins and configure API keys.
+## Your Configuration
+
+[AGENT: List the specific plugins, folders, and features discovered in this vault. Explain their purpose based on OBSIDIAN.md or inferred from configuration.]
 
 ## Next Steps
-1. Review Settings > Options for vault preferences
-2. Check Templates folder for available templates
-3. Configure Daily Notes if using that workflow
-4. Set up any plugin-specific settings
 
-Happy note-taking! 🚀
+[AGENT: Provide specific next steps based on the discovered workflow. Reference actual hotkeys, templates, and workflows from the migrated configuration.]
+
+---
+
+[AGENT: If OBSIDIAN.md references external documentation or blog posts, link them here.]
+
+Happy thinking! 🧠✨
 EOF
 
 # Clean up the temporary directory when done
 rm -rf ./temp-obsidian-analysis
 \`\`\``;
     } else {
-      // No custom repo - show options including default
-      messageContent = `# 🎯 Obsidian Vault Bootstrap & Migration Assistant
+      // No custom repo - use default
+      messageContent = `# 🎯 Obsidian Vault Bootstrap Assistant
 
-I'll help you create a new Obsidian vault with a proven configuration.
-
-## Option 1: Use Default Configuration 🎯
+I'll help you create a new Obsidian vault based on a proven configuration.
 
 **Default config:** ${defaultGithubRepo}
 **Target location:** ${location}
 
-Say: **"Create my vault with the default config"** or **"Create a vault called MyVault"**
+I'll clone and analyze the configuration to understand its workflow philosophy, then set up your vault.
 
-This will set up your vault with a well-tested configuration including:
-- Quick capture inbox workflow
-- Daily notes with templates
-- Task management
-- Essential plugins pre-configured
+---
 
-## Option 2: Fresh Start with Templates 📚
+**To get started, say:** "Create a vault called [VaultName]"
 
-**Quick Presets:**
-
-**minimal** - Clean start with basic folders
-- Folders: notes, daily, attachments
-- Features: Simple daily notes, Basic folder organization
-
-**para** - Projects, Areas, Resources, Archive method
-- Folders: 1-Projects, 2-Areas, 3-Resources, 4-Archive, daily-notes, templates, attachments
-- Features: PARA organization, Project tracking, Daily notes, Weekly reviews
-
-**pkm** - Personal Knowledge Management with MOCs
-- Folders: MOCs, Sources, Ideas, Projects, daily-notes, templates, attachments
-- Features: Maps of Content, Progressive summarization, Daily notes, Idea development
-
-**zettelkasten** - Academic note-taking with atomic notes
-- Folders: fleeting, literature, permanent, index, attachments
-- Features: Unique note IDs, Atomic notes, Strict linking, Emergence patterns
-
-**Example:** "Create a PKM vault called Second-Brain"
-
-## Option 3: Migrate from Your GitHub Repo 🔄
-
-**Provide your own GitHub URL with a .obsidian folder and I'll:**
-1. Clone and analyze the configuration
-2. Explain the key hotkeys and workflows
-3. Guide you through recreating the setup
-4. Help you understand the system
-
-**Example:** "Help me migrate from https://github.com/kepano/obsidian-minimal"
+**To migrate from your own GitHub repo:** "Migrate from https://github.com/username/repo"
 
 ---
 
 ## For AI Agent: Instructions
 
-When user wants to use default config or doesn't specify:
+When user wants to create a vault (doesn't provide github_repo):
 - Use ${defaultGithubRepo} as the source
 - Follow migration instructions below
 
@@ -300,9 +269,19 @@ When user provides a GitHub URL:
 # Clone the repo to a local temp directory (in current working directory)
 git clone --depth 1 [REPO_URL] ./temp-obsidian-analysis
 
-# Check for OBSIDIAN.md to understand vault structure
+# Check for OBSIDIAN.md to understand vault structure and philosophy
 if [ -f "./temp-obsidian-analysis/OBSIDIAN.md" ]; then
+    echo "📋 Found OBSIDIAN.md - analyzing vault philosophy and structure..."
     cat ./temp-obsidian-analysis/OBSIDIAN.md
+    echo ""
+    echo "🔍 OBSIDIAN.md found - agent should read this to understand vault philosophy"
+    echo ""
+    echo "🎯 Agent Instructions:"
+    echo "- Read OBSIDIAN.md completely to understand the knowledge management approach"
+    echo "- Analyze tag patterns in markdown files to identify conceptual vocabulary"
+    echo "- Examine link usage to understand knowledge connection patterns"
+    echo "- Review plugin configurations to understand workflow automation"
+    echo "- Create personalized Getting Started guide based on discovered patterns"
 fi
 
 # Check for .obsidian folder
@@ -405,124 +384,82 @@ else
 fi
 
 # Create a Getting Started guide for the user
+# IMPORTANT: Agent must replace this template with content extracted from OBSIDIAN.md
+# DO NOT use this generic template - analyze the vault and create personalized content
 cat > [NEW_VAULT_PATH]/Getting-Started.md << 'EOF'
-# Getting Started with Your Migrated Vault
+# Getting Started with Your Vault
 
-This vault was migrated from a GitHub repository. Here's what you need to know:
+This vault was migrated from a GitHub repository.
 
-## Folder Structure
-- **inbox/** - Quick capture for new notes
-- **projects/** - Active projects
-- **areas/** - Ongoing responsibilities
-- **resources/** - Reference materials
-- **archive/** - Completed/inactive items
-- **templates/** - Note templates
-- **attachments/** - Images and files
+## Workflow Philosophy
 
-## Key Hotkeys
-Check Settings > Hotkeys for all configured shortcuts. Common ones:
-- Cmd/Ctrl + P: Command palette
-- Cmd/Ctrl + O: Quick switcher
-- Cmd/Ctrl + N: New note
+[AGENT: Extract and present the workflow philosophy from OBSIDIAN.md here. Use the actual language and principles from the documentation. Include key workflow patterns, tool usage, and organizational approach.]
 
-## Installed Plugins
-View Settings > Community Plugins to see what's installed.
-You may need to enable plugins and configure API keys.
+## Your Configuration
+
+[AGENT: List the specific plugins, folders, and features discovered in this vault. Explain their purpose based on OBSIDIAN.md or inferred from configuration.]
 
 ## Next Steps
-1. Review Settings > Options for vault preferences
-2. Check Templates folder for available templates
-3. Configure Daily Notes if using that workflow
-4. Set up any plugin-specific settings
 
-Happy note-taking! 🚀
+[AGENT: Provide specific next steps based on the discovered workflow. Reference actual hotkeys, templates, and workflows from the migrated configuration.]
+
+---
+
+[AGENT: If OBSIDIAN.md references external documentation or blog posts, link them here.]
+
+Happy thinking! 🧠✨
 EOF
 
 # Clean up the temporary directory when done
 rm -rf ./temp-obsidian-analysis
 \`\`\`
 
-### 3. Explain Key Features
-- Parse hotkeys.json and explain important shortcuts
-- List community plugins and their purposes
-- Identify workflow patterns (daily notes, zettelkasten, etc.)
-- Note any custom CSS or themes
+### 3. Agent Instructions for Understanding and Onboarding
+
+**CRITICAL**: After completing the technical migration steps above, you must analyze and articulate the vault's philosophy:
+
+1. **Read OBSIDIAN.md First**:
+   - Look in ./temp-obsidian-analysis/OBSIDIAN.md
+   - If found: Extract the complete workflow philosophy, principles, and approach
+   - If not found: Analyze vault structure, plugins, templates to infer organizational patterns
+
+2. **Extract Key Philosophy Elements**:
+   - **Workflow approach**: How does this vault handle capture, organization, synthesis?
+   - **Tool usage**: What plugins are essential and why? (QuickAdd, Readwise, Templater, etc.)
+   - **Folder philosophy**: What do folders represent? (stages, types, areas?)
+   - **Tag/link strategy**: How are connections made? Aspirational tags? Wiki links?
+   - **Friction reduction**: What automation exists? What decisions are eliminated?
+
+3. **Present the Philosophy to User**:
+   - After vault setup, explain the discovered approach in 3-5 bullet points
+   - Use the actual language/terminology from OBSIDIAN.md
+   - Quote key principles if they exist
+   - Link to any external documentation (blog posts, articles)
+   - Don't invent philosophy - present what you found
+
+4. **Create Personalized Getting Started Guide**:
+   - Replace the template with content based on discovered OBSIDIAN.md philosophy
+   - Use discovered vocabulary and principles
+   - Explain the specific workflow this vault enables
+   - Show how plugins support the stated approach
+   - Reference the folder structure purpose
+   - Keep it concise - trust they'll explore
+
+5. **For Missing OBSIDIAN.md**:
+   - Analyze plugin configurations to infer purpose
+   - Note folder structure patterns
+   - Identify templates and their workflows
+   - Present findings neutrally: "This vault appears to use..."
+   - Suggest they document their approach
+
+**Goal**: Be a neutral analyst that extracts and presents the vault's existing philosophy, not an opinionated system that imposes one.
 
 ### 4. Guide Setup
-- List plugins to install from Obsidian Community Plugins
-- Explain folder structure and organization system
-- Highlight important settings to configure
-- Suggest starting points for the user
-
-### For Fresh Vaults with Templates:
-
-When user asks to create a vault (e.g., "Create a PKM vault called Second-Brain"):
-
-1. Create the vault directory and folders:
-
-\`\`\`bash
-# Set vault path (default: ~/Documents/Obsidian/VaultName)
-VAULT_PATH=~/Documents/Obsidian/Second-Brain
-
-# Create vault and .obsidian directory
-mkdir -p "$VAULT_PATH/.obsidian"
-
-# For PKM template, create these folders:
-mkdir -p "$VAULT_PATH"/{MOCs,Sources,Ideas,Projects,daily-notes,templates,attachments}
-
-# For PARA template:
-# mkdir -p "$VAULT_PATH"/{1-Projects,2-Areas,3-Resources,4-Archive,daily-notes,templates,attachments}
-
-# For Zettelkasten:
-# mkdir -p "$VAULT_PATH"/{fleeting,literature,permanent,index,attachments}
-
-# For Minimal:
-# mkdir -p "$VAULT_PATH"/{notes,daily,attachments}
-\`\`\`
-
-2. Create basic config files:
-
-\`\`\`bash
-# Create basic app.json
-cat > "$VAULT_PATH/.obsidian/app.json" << 'EOF'
-{
-  "attachmentFolderPath": "attachments",
-  "alwaysUpdateLinks": true,
-  "showLineNumber": true,
-  "defaultViewMode": "source"
-}
-EOF
-
-# Create core-plugins.json (enable useful defaults)
-cat > "$VAULT_PATH/.obsidian/core-plugins.json" << 'EOF'
-{
-  "file-explorer": true,
-  "global-search": true,
-  "switcher": true,
-  "graph": true,
-  "backlink": true,
-  "canvas": true,
-  "outgoing-link": true,
-  "tag-pane": true,
-  "properties": true,
-  "page-preview": true,
-  "daily-notes": true,
-  "templates": true,
-  "note-composer": true,
-  "command-palette": true,
-  "outline": true,
-  "word-count": true,
-  "file-recovery": true
-}
-EOF
-
-# For specific templates, suggest plugins:
-# PARA: templater, tasks, kanban
-# PKM: templater, dataview, quickadd
-# Zettelkasten: templater, unique-note-id
-\`\`\`
-
-Remember: Keep it simple! The user will configure details in Obsidian.`;
+- List the plugins discovered and their purpose based on OBSIDIAN.md
+- Explain the workflow as described in the vault's documentation
+- Highlight key folders and their role in the system
+- Show how tools connect to support the stated philosophy
+- Reference any external documentation or articles`;
     }
 
     const messages: PromptMessage[] = [
