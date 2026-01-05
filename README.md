@@ -1,98 +1,55 @@
-# Obsidian Vault Bootstrap MCP Server
+# Obsidian Bootstrap
 
-An MCP (Model Context Protocol) server that helps you bootstrap new Obsidian vaults or migrate from existing GitHub repos using simple, transparent bash commands.
+A Claude Code skill that helps you create and configure personalized Obsidian vaults through an interactive wizard.
 
 ## Features
 
-- Transparent: Uses `mkdir`, `cat`, `cp`, and `git clone`
-- Template presets: minimal, para, pkm, zettelkasten (folder lists only)
-- Migration helper: Analyze a repo's `.obsidian` and copy configs
+- **Interactive Setup**: Guided wizard that asks about your workflows and preferences
+- **Smart Detection**: Evaluates existing vaults and resumes from where you left off
+- **Pre-configured Plugins**: Includes essential plugins (Dataview, Templater, QuickAdd, Tasks, etc.)
+- **Personalized Guide**: Generates a Getting Started guide tailored to your setup
+- **Beginner-Friendly**: Uses plain language, avoids jargon like "PARA" or "Zettelkasten"
 
-## Installation
-
-### Quick Install (Recommended)
-
-Run this one-liner to automatically install the obsidian-bootstrap MCP server:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/jshph/obsidian-bootstrap/master/setup.sh | sh
-```
-
-This will:
-- Download the prebuilt binary
-- Install it to `~/.claude/mcp-servers/obsidian-bootstrap`
-- Register it with Claude Code automatically
-
-### Manual Installation
-
-<details>
-<summary>Alternative: Install from source or use pre-built binary</summary>
-
-#### Option 1: Pre-built binary
-
-The compiled MCP server is in `dist/obsidian-bootstrap`.
-
-Claude Desktop configuration (paths vary by OS):
-- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
-- Linux: `~/.config/claude/claude_desktop_config.json`
-
-Add to `mcpServers`:
-
-```json
-{
-  "mcpServers": {
-    "obsidian-bootstrap": {
-      "command": "/absolute/path/to/bootstrap-vault/dist/obsidian-bootstrap"
-    }
-  }
-}
-```
-
-#### Option 2: Build from source
+## Usage
 
 ```bash
 git clone https://github.com/jshph/obsidian-bootstrap
 cd obsidian-bootstrap
-bun install
-bun run build
+claude
 ```
 
-Outputs `dist/obsidian-bootstrap` (no extra template files required).
+Then just describe what you want:
 
-</details>
+- "Help me set up an Obsidian vault"
+- "Create a new vault in ./notes"
+- "I have an existing vault at ~/obsidian - help me configure it"
 
-## Usage
+The wizard will guide you through:
 
-### Quick Start (Recommended)
+1. **Vault Setup**: Name and location for your vault
+2. **Workflow Discovery**: Questions about how you'll use Obsidian
+3. **Plugin Selection**: Automatic selection based on your needs
+4. **Configuration**: QuickAdd macros, templates, and hotkeys
+5. **Getting Started Guide**: Personalized documentation for your vault
 
-1. Open Claude in interactive mode:
-   ```bash
-   claude
-   ```
+## What's Included
 
-2. In Claude, type:
-   ```
-   /obsidian-bootstrap:bootstrap_vault (MCP)
-   ```
+### Plugins
+- Dataview, Templater, QuickAdd (essentials)
+- Tasks (productivity)
+- PDF Plus, Annotator (document annotation)
+- Readwise Official (highlight sync)
+- And more...
 
-3. Follow the prompts to:
-   - Create a vault with the default configuration
-   - Choose from preset templates (minimal, PARA, PKM, Zettelkasten)
-   - Migrate from your own GitHub repository
+### Themes
+- Minimal, Primary, AnuPpuccin
+- Things, Sanctum, Atom
+- Shimmering Focus, Typewriter, Typomagical
 
-That's it! Claude will handle the rest.
-```
-
-## Development
-
-```bash
-# Dev (auto-reload)
-bun run dev
-
-# Build
-bun run build
-```
+### Pre-configured
+- Keyboard shortcuts for common actions
+- Templates for daily notes, meetings, projects
+- QuickAdd macros for quick capture
 
 ## License
 
