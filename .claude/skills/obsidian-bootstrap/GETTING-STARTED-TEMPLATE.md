@@ -304,6 +304,144 @@ The goal isn't a perfect system - it's a trusted place to think.
 - Notes will naturally want to group together
 - That's when folders and tags make sense - not before
 
+[IF USER EXPRESSED INTEREST IN KNOWLEDGE GROWTH - include based on Step 5.5 responses]
+
+## Growing Your Knowledge
+
+You expressed interest in building connections between your ideas. Here's how that works in practice - but there's no rush. These habits make more sense once you have notes to connect.
+
+[IF user selected "Connecting ideas"]
+### Connecting Ideas with Links
+
+The magic of Obsidian is the humble `[[link]]`. When you type `[[` and start typing a note name, you create a connection between two ideas.
+
+**When to link:**
+- When you mention something you've written about before
+- When two ideas feel related (even if you're not sure how)
+- When you want to find your way back to something
+
+**Try this:** Next time you're writing and think "this reminds me of..." - create a link. Even if the other note doesn't exist yet, Obsidian will create it when you click.
+
+**The backlinks panel** (right sidebar) shows every note that links *to* the current note. This is how you discover unexpected connections.
+
+> **Tutorial:** [How Linking Creates a Web of Knowledge](placeholder://tutorials/linking-basics)
+
+[IF user selected "Creating hubs"]
+### Hub Notes (Index Notes)
+
+As your notes grow, you'll notice clusters of related ideas. A hub note gathers these together in one place.
+
+**Example:** You have 15 notes about "productivity." Create a note called `Productivity Hub` that links to all of them:
+
+```markdown
+# Productivity Hub
+
+Ideas I'm exploring about getting things done.
+
+## Core concepts
+- [[Deep Work]]
+- [[Time blocking]]
+- [[Energy management]]
+
+## Experiments I'm trying
+- [[Morning routine]]
+- [[Weekly review practice]]
+
+## Books and articles
+- [[Book - Atomic Habits]]
+- [[Article - The Myth of Multitasking]]
+```
+
+**Don't force it.** Wait until you naturally have 10+ notes on a topic. The hub should feel useful, not obligatory.
+
+> **Tutorial:** [Creating Your First Hub Note](placeholder://tutorials/hub-notes)
+
+[IF user selected "Growing ideas over time"]
+### Growing Ideas Over Time
+
+Some notes are quick captures. Others become something more - ideas you return to, refine, and develop. These are sometimes called "evergreen notes."
+
+**Signs a note wants to grow:**
+- You keep linking to it from other notes
+- You add to it over multiple sessions
+- It captures a core concept you're developing
+
+**How to nurture them:**
+- Give them clear, concept-based titles ("Creativity requires constraints" not "Ideas from Tuesday")
+- Keep them atomic - one idea per note
+- Let them link freely to related concepts
+- Revisit them when you learn something new
+
+**Don't overthink it.** Most notes stay quick captures. The important ones will make themselves obvious.
+
+> **Tutorial:** [Developing Ideas That Last](placeholder://tutorials/evergreen-notes)
+
+[IF user selected "Regular tending"]
+### Regular Tending
+
+A knowledge system isn't "set and forget" - it benefits from occasional attention. Think of it like tending a garden.
+
+**Weekly tending (10 minutes):**
+- Browse your inbox folder
+- Move notes that have grown up (out of inbox into your structure)
+- Notice notes that want to link to each other
+- Check your daily notes for seeds worth planting
+
+**Monthly tending (30 minutes):**
+- Open the graph view (`Ctrl + G`) and explore
+- Look for orphan notes (no links in or out)
+- Revisit a random hub note - is it still accurate?
+- Notice what topics have the most notes - that's what you're actually thinking about
+
+**The random note habit:** Open a random note occasionally. You'll be surprised what past-you was thinking about. This creates serendipitous connections.
+
+> **Tutorial:** [The Art of Tending Your Notes](placeholder://tutorials/note-gardening)
+
+[IF user selected "Connecting ideas" OR "Creating hubs"]
+### The Graph View
+
+Press `Ctrl + G` to see your notes as a visual network. Each note is a dot, each link is a line connecting them.
+
+**Early on:** Your graph will look sparse. That's normal.
+
+**Over time:** Clusters will form around topics you think about most. This is your mind made visible.
+
+**Use it for:**
+- Discovering notes you forgot about
+- Seeing which ideas are most connected
+- Finding orphan notes that need links
+- Just enjoying the view
+
+**Don't obsess over it.** The graph is a side effect of good linking, not a goal in itself.
+
+---
+
+**Remember:** These are habits to develop over months, not tasks to complete. Start with capturing. Links and connections will follow naturally.
+
+[END KNOWLEDGE GROWTH SECTION]
+
+[IF USER SAID "MAYBE LATER" - include this shorter teaser instead]
+
+## When You're Ready to Go Deeper
+
+You mentioned you might want to explore more advanced note-taking habits later. When that time comes, here are some concepts worth learning:
+
+| Concept | What it means | When to explore |
+|---------|---------------|-----------------|
+| **Linking** | Connecting notes with `[[links]]` | After you have 20+ notes |
+| **Hub notes** | Index notes that gather related ideas | After you have 10+ notes on one topic |
+| **Evergreen notes** | Ideas you develop over time | After you notice certain notes keep coming up |
+| **Tending** | Regular review and connecting | After a month of daily notes |
+
+**Resources when you're ready:**
+- [Linking Your Thinking (YouTube)](https://youtube.com/c/linkingyourthinking) - Nick Milo's channel on connected note-taking
+- [Obsidian Hub](https://publish.obsidian.md/hub) - Community-curated resources
+- [Effective Note-Taking](placeholder://tutorials/getting-started-advanced) - A gentle next step
+
+No rush. The basics will take you far.
+
+[END MAYBE LATER SECTION]
+
 ## What "Success" Looks Like
 
 **Week 1**: You opened Obsidian a few times and wrote something.
@@ -379,3 +517,33 @@ Based on what the user selected for "What situations will you use this in?":
 - "Here's what Monday morning looks like..."
 - "When your boss asks you to do something..."
 - "After a meeting, take 30 seconds to..."
+
+### Customizing "Growing Your Knowledge" section
+
+Based on user responses in Step 5.5 (Knowledge Growth Discovery):
+
+| User response | What to include |
+|---------------|-----------------|
+| "Yes, that sounds exciting" | Full "Growing Your Knowledge" section |
+| + "Connecting ideas" | Include "Connecting Ideas with Links" + "The Graph View" |
+| + "Creating hubs" | Include "Hub Notes" + "The Graph View" |
+| + "Growing ideas over time" | Include "Growing Ideas Over Time" |
+| + "Regular tending" | Include "Regular Tending" |
+| "Maybe later" | Include shorter "When You're Ready to Go Deeper" teaser |
+| "Keep it simple" | Omit both sections entirely |
+
+**Tutorial placeholders:**
+The `placeholder://tutorials/*` links are intentional placeholders. In a future version, these could:
+- Link to curated YouTube tutorials
+- Link to Obsidian community guides
+- Trigger an in-vault tutorial system
+- Open a contextual help panel
+
+For now, they signal "this is where a tutorial would go" and can be replaced with real links when available.
+
+**Tone for knowledge growth content:**
+- Emphasize patience: "no rush", "over months not days"
+- Normalize the messy middle: "your graph will look sparse"
+- Avoid perfectionism: "don't overthink it", "don't force it"
+- Frame as optional: "habits to develop" not "steps to complete"
+- Use concrete triggers: "after you have 20+ notes", "when you notice..."

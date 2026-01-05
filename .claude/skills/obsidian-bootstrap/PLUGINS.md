@@ -80,3 +80,96 @@ Reference for available plugins (13 total). Use this to help users choose what t
 | **Reading/Research** | pdf-plus, readwise-official, obsidian-annotator, media-extended | "Do you read PDFs, use Readwise, or work with media?" |
 | **Advanced** | obsidian-advanced-uri, actions-uri, obsidian42-brat | "Do you need automation/integration with other apps?" |
 | **Appearance** | obsidian-style-settings, obsidian-fullscreen-plugin | "Do you want to customize appearance?" |
+
+---
+
+## Documentation Snippets for Getting Started Guide
+
+When generating the Getting Started guide, use these descriptions for installed plugins:
+
+### dataview
+```markdown
+## Dataview - Query Your Notes
+
+Dataview lets you query notes like a database. Examples:
+
+- List all notes tagged #project: `LIST FROM #project`
+- Table of tasks due this week: `TASK WHERE due <= date(today) + dur(7 days)`
+- Notes modified today: `LIST WHERE file.mtime >= date(today)`
+
+Learn more: https://blacksmithgu.github.io/obsidian-dataview/
+```
+
+### templater-obsidian
+```markdown
+## Templater - Smart Templates
+
+Create templates with dynamic content. Press `Cmd/Ctrl + T` to insert a template.
+
+- `<% tp.date.now("YYYY-MM-DD") %>` - Today's date
+- `<% tp.file.title %>` - Current file name
+- `<% tp.system.prompt("Question?") %>` - Ask for input
+
+Templates folder: `templates/`
+```
+
+### obsidian-tasks-plugin
+```markdown
+## Tasks - Task Management
+
+Track tasks across your vault. Press `Cmd/Ctrl + Shift + Enter` to toggle done.
+
+- `- [ ] Task description` - Basic task
+- `- [ ] Task 📅 2024-01-15` - With due date
+- `- [ ] Task ⏫` - High priority
+
+Query tasks with dataview or the Tasks plugin query blocks.
+```
+
+### quickadd
+```markdown
+## QuickAdd - Fast Capture
+
+Press `Cmd/Ctrl + Shift + N` to open QuickAdd menu.
+
+Your configured shortcuts:
+[GENERATE TABLE BASED ON CONFIGURED CHOICES]
+```
+
+### pdf-plus
+```markdown
+## PDF Plus - Enhanced PDF Reading
+
+Open any PDF with enhanced features. Press `Ctrl+Shift+C` to copy link to selection.
+
+- Annotations and highlights with colors
+- Copy text with page references
+- Link to specific pages and selections
+```
+
+### readwise-official
+```markdown
+## Readwise - Sync Your Highlights
+
+[IF TOKEN WAS CONFIGURED]
+Your Readwise is connected! Highlights will sync to the `Readwise/` folder.
+
+To sync: Settings > Readwise > Sync now
+
+[IF TOKEN NOT CONFIGURED]
+To connect Readwise:
+1. Get your token from https://readwise.io/access_token
+2. Go to Settings > Readwise
+3. Paste your token and sync
+```
+
+### media-extended
+```markdown
+## Media Extended - Audio/Video Player
+
+Enhanced media playback in your vault:
+
+- Embed audio/video files
+- Timestamp links for notes
+- Playback controls
+```
