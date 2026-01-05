@@ -1,0 +1,104 @@
+{
+  "app:delete-file": [
+    {
+      "modifiers": ["Mod", "Shift"],
+      "key": "D"
+    }
+  ],
+  "daily-notes": [
+    {
+      "modifiers": ["Mod"],
+      "key": "D"
+    }
+  ],
+  "workspace:previous-tab": [
+    {
+      "modifiers": ["Ctrl", "Shift"],
+      "key": "Tab"
+    }
+  ],
+  "workspace:next-tab": [
+    {
+      "modifiers": ["Ctrl"],
+      "key": "Tab"
+    }
+  ],
+  "app:toggle-right-sidebar": [
+    {
+      "modifiers": ["Mod", "Shift"],
+      "key": "]"
+    }
+  ],
+  "app:toggle-left-sidebar": [
+    {
+      "modifiers": ["Mod", "Shift"],
+      "key": "["
+    }
+  ],
+  "graph:open-local": [
+    {
+      "modifiers": ["Ctrl"],
+      "key": "G"
+    }
+  ],
+  "editor:insert-wikilink": [
+    {
+      "modifiers": ["Mod", "Shift"],
+      "key": "K"
+    }
+  ],
+  "backlink:open-backlinks": [
+    {
+      "modifiers": ["Ctrl"],
+      "key": "B"
+    }
+  ],
+  "workspace:edit-file-title": [
+    {
+      "modifiers": ["Mod"],
+      "key": "L"
+    }
+  ],
+  "editor:toggle-checklist-status": [
+    {
+      "modifiers": ["Mod"],
+      "key": "Enter"
+    }
+  ],
+  "editor:toggle-highlight": [
+    {
+      "modifiers": ["Ctrl"],
+      "key": "H"
+    }
+  ],
+  "file-explorer:move-file": [
+    {
+      "modifiers": ["Mod", "Shift"],
+      "key": "M"
+    }
+  ],
+  "pdf-plus:copy-link-to-selection": [
+    {
+      "modifiers": ["Ctrl", "Shift"],
+      "key": "C"
+    }
+  ],
+  "quickadd:runQuickAdd": [
+    {
+      "modifiers": ["Mod", "Shift"],
+      "key": "N"
+    }
+  ],
+  "templater-obsidian:insert-templater": [
+    {
+      "modifiers": ["Mod"],
+      "key": "T"
+    }
+  ],
+  "obsidian-tasks-plugin:toggle-done": [
+    {
+      "modifiers": ["Mod", "Shift"],
+      "key": "Enter"
+    }
+  ]
+}

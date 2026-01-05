@@ -1,0 +1,43 @@
+{
+  "promptDelete": false,
+  "defaultViewMode": "source",
+  "alwaysUpdateLinks": true,
+  "readableLineLength": true,
+  "strictLineBreaks": true,
+  "livePreview": true,
+  "showUnsupportedFiles": true,
+  "pdfExportSettings": {
+    "includeName": true,
+    "pageSize": "Letter",
+    "landscape": false,
+    "margin": "2",
+    "downscalePercent": 66
+  },
+  "mobileToolbarCommands": [
+    "editor:insert-wikilink",
+    "editor:insert-tag",
+    "editor:toggle-checklist-status",
+    "editor:indent-list",
+    "editor:unindent-list",
+    "editor:toggle-highlight",
+    "editor:undo",
+    "editor:redo",
+    "editor:open-link-in-new-leaf",
+    "editor:set-heading",
+    "editor:attach-file",
+    "editor:insert-embed",
+    "editor:cycle-list-checklist",
+    "editor:toggle-bold",
+    "editor:toggle-italics",
+    "editor:toggle-strikethrough",
+    "editor:insert-link",
+    "editor:toggle-code",
+    "editor:toggle-blockquote",
+    "editor:toggle-bullet-list",
+    "editor:toggle-numbered-list",
+    "editor:configure-toolbar"
+  ],
+  "userIgnoreFilters": [
+    "/personal2"
+  ]
+}

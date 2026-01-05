@@ -1,0 +1,26 @@
+{
+  "choices": [],
+  "macros": [],
+  "inputPrompt": "single-line",
+  "devMode": false,
+  "templateFolderPath": "templates",
+  "announceUpdates": true,
+  "version": "1.18.1",
+  "disableOnlineFeatures": true,
+  "enableRibbonIcon": false,
+  "ai": {
+    "defaultModel": "Ask me",
+    "defaultSystemPrompt": "",
+    "promptTemplatesFolderPath": "",
+    "showAssistant": false,
+    "providers": []
+  },
+  "migrations": {
+    "migrateToMacroIDFromEmbeddedMacro": true,
+    "useQuickAddTemplateFolder": true,
+    "incrementFileNameSettingMoveToDefaultBehavior": true,
+    "mutualExclusionInsertAfterAndWriteToBottomOfFile": true,
+    "setVersionAfterUpdateModalRelease": true,
+    "addDefaultAIProviders": true
+  }
+}

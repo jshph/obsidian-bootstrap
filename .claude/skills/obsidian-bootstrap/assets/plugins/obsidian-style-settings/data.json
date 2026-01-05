@@ -1,0 +1,8 @@
+{
+  "anuppuccin-theme-settings@@anuppuccin-theme-dark": "ctp-frappe",
+  "sanctum@@dark-mode-contrast-mode": "sanctum-contrast-dark",
+  "minimal-style@@table-nowrap": false,
+  "minimal-style@@row-alt": true,
+  "minimal-style@@trim-cols": false,
+  "minimal-style@@max-col-width": "25em"
+}
