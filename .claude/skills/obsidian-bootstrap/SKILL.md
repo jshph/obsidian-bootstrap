@@ -11,6 +11,7 @@ An interactive wizard for creating and configuring personalized Obsidian vaults.
 ## Reference Documents
 
 - [VAULT-EVALUATION.md](VAULT-EVALUATION.md) - How to evaluate vault state and resume from the right step
+- [VAULT-REGISTRATION.md](VAULT-REGISTRATION.md) - Cross-platform vault registration in Obsidian's app config
 - [QUICKADD-CONFIG.md](QUICKADD-CONFIG.md) - QuickAdd choice/template configuration details
 - [KNOWLEDGE-GROWTH.md](KNOWLEDGE-GROWTH.md) - Knowledge growth discovery questions and concept mapping
 - [HOTKEYS.md](HOTKEYS.md) - Pre-configured keyboard shortcuts
@@ -165,15 +166,55 @@ If `Getting-Started.md` exists, **update rather than regenerate**:
 3. Preserve personalized content
 4. Ask user before major changes
 
-### Step 9: Open Vault in Obsidian
+### Step 9: Register and Open Vault in Obsidian
+
+Use the scripts in `scripts/` for cross-platform vault registration. See [VAULT-REGISTRATION.md](VAULT-REGISTRATION.md) for details.
+
+**1. Check if Obsidian is installed:**
 
 ```bash
-FILE_PATH="$VAULT_PATH/Getting-Started.md"
-PATH_ENCODED=$(echo "$FILE_PATH" | sed 's/ /%20/g')
-open "obsidian://open?path=$PATH_ENCODED"
+python scripts/check_obsidian.py
 ```
 
-Using `path` instead of `vault` works for new vaults - Obsidian will prompt to register.
+Exit code 0 = installed, 1 = not installed.
+
+**If NOT installed**, use `AskUserQuestion`:
+
+```
+Your vault is ready at [VAULT_PATH], but I couldn't detect Obsidian on your system.
+
+Would you like to:
+1. Download Obsidian (opens obsidian.md/download)
+2. I already have it installed (continue with registration)
+3. Skip for now (I'll open it manually later)
+```
+
+**2. Register the vault:**
+
+```bash
+python scripts/register_vault.py "$VAULT_PATH"
+```
+
+Outputs `vault_id=<id>` on success. Captures the ID for opening.
+
+**3. Restart Obsidian** (required for new registrations):
+
+```bash
+python scripts/restart_obsidian.py
+```
+
+**4. Open the vault:**
+
+```bash
+sleep 3  # Wait for Obsidian to start
+open "obsidian://open?vault=[VAULT_ID]&file=Getting-Started"
+```
+
+**Fallback**: If registration fails or Obsidian isn't installed, use path-based URI:
+
+```bash
+open "obsidian://open?path=$VAULT_PATH/Getting-Started.md"
+```
 
 ### Step 10: Offer Enzyme (Optional)
 
@@ -225,8 +266,9 @@ This adds Enzyme to this vault's project settings, so when you're working
 in this vault with Claude Code, it can search and reference your notes.
 ```
 
-If yes:
+If yes (run from the vault directory):
 ```bash
+cd "$VAULT_PATH"
 claude mcp add enzyme --scope project enzyme-mcp
 ```
 
