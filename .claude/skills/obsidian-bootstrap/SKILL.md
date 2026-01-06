@@ -258,7 +258,7 @@ Use `AskUserQuestion` to confirm they want to proceed.
 
 ```bash
 cd "$VAULT_PATH"
-source ~/Hacks/enzyme-python/venv/bin/activate && enzyme init --accept-data-usage
+enzyme init --accept-data-usage
 ```
 
 This activates the local Enzyme development environment and runs initialization.
