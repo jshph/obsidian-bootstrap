@@ -51,6 +51,10 @@ The wizard will guide you through:
 - Templates for daily notes, meetings, projects
 - QuickAdd macros for quick capture
 
+## Explore Your Vault
+
+Once you've got notes, [Enzyme](https://enzyme.garden) can help you find threads in your thinking. Your files stay local — even half-tagged captures are enough.
+
 ## License
 
 MIT
