@@ -216,6 +216,16 @@ enzyme init
 ```
 
 **After init completes, offer MCP setup for Claude Code:**
+
+Use `AskUserQuestion` with this framing:
+```
+Would you like to add Enzyme as an MCP server for Claude Code?
+
+This adds Enzyme to this vault's project settings, so when you're working
+in this vault with Claude Code, it can search and reference your notes.
+```
+
+If yes:
 ```bash
 claude mcp add enzyme --scope project enzyme-mcp
 ```

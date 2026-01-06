@@ -8,3 +8,5 @@
 # Environment
 .env
 .env.local
+
+*.settings.local.json
