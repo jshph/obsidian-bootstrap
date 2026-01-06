@@ -238,23 +238,32 @@ Learn more: https://enzyme.garden
 
 **If they choose to install:**
 
-```bash
-# Check if already installed
-if command -v enzyme &> /dev/null; then
-    echo "Enzyme is already installed"
-else
-    # Install via Homebrew (preferred) or curl fallback
-    if command -v brew &> /dev/null; then
-        brew install jshph/enzyme/enzyme
-    else
-        curl -fsSL enzyme.garden/install.sh | bash
-    fi
-fi
+**Privacy notice:**
 
-# Initialize the vault
-cd "$VAULT_PATH"
-enzyme init
+Before running Enzyme, explain the data usage to the user:
+
 ```
+Enzyme sends your note content to AI services for analysis:
+
+• Initialization — Anthropic Claude analyzes your vault structure
+• Catalyst generation — AI (via OpenRouter) processes notes for summaries
+
+Your files stay local; only content is sent for processing.
+Privacy policy: https://enzyme.garden/privacy
+```
+
+Use `AskUserQuestion` to confirm they want to proceed.
+
+**If they agree, initialize the vault:**
+
+```bash
+cd "$VAULT_PATH"
+source ~/Hacks/enzyme-python/venv/bin/activate && enzyme init --accept-data-usage
+```
+
+This activates the local Enzyme development environment and runs initialization.
+The `--accept-data-usage` flag acknowledges the privacy notice so Enzyme
+runs non-interactively.
 
 **After init completes, offer MCP setup for Claude Code:**
 

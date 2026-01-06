@@ -1,9 +1,9 @@
-# Meeting: <% tp.file.title %>
-
-Date: <% tp.date.now("YYYY-MM-DD") %>
-Attendees:
-
 ---
+tags:
+created: '[[<% tp.date.now("YYYY-MM-DD") %>]]'
+attendees:
+---
+# Meeting: <% tp.file.title %>
 
 ## Agenda
 
