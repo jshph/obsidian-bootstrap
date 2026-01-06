@@ -9,14 +9,15 @@ Based on what the user said they do, create these QuickAdd choices and templates
 | User said they do... | Create QuickAdd choice | Create template |
 |---------------------|------------------------|-----------------|
 | Meetings and calls | "🗓️ New Meeting" (Template) | `templates/meeting.md` |
-| Projects and tasks | "✅ Quick Task" (Capture to inbox) | - |
+| Projects and tasks | "✅ Quick Task" (Capture to inbox) | Uses `templates/capture.md` |
 | Research/reading | "📚 Reading Note" (Template) | `templates/reading.md` |
 | Personal journaling | "📝 Journal Entry" (Template) | `templates/journal.md` |
-| Ideas/brainstorming | "💡 Quick Idea" (Capture to inbox) | - |
+| Ideas/brainstorming | "💡 Quick Idea" (Capture to inbox) | Uses `templates/capture.md` |
 | Learning/studying | "📖 Study Note" (Template) | `templates/study.md` |
 
-**Always include a basic capture:**
-- "📥 Quick Capture" → captures to `inbox/{{DATE}}-thoughts.md`
+**Always include:**
+- "📥 Quick Capture" → captures to `inbox/{{DATE}}-thoughts.md` (uses `templates/capture.md`)
+- `templates/capture.md` - minimal frontmatter template for all capture-created files
 
 ## QuickAdd JSON Structure
 
@@ -34,8 +35,8 @@ Generate the QuickAdd config dynamically based on user selections. Here's an exa
       "captureToActiveFile": false,
       "createFileIfItDoesntExist": {
         "enabled": true,
-        "createWithTemplate": false,
-        "template": ""
+        "createWithTemplate": true,
+        "template": "templates/capture.md"
       },
       "format": {
         "enabled": true,
@@ -64,8 +65,8 @@ Generate the QuickAdd config dynamically based on user selections. Here's an exa
       "captureToActiveFile": false,
       "createFileIfItDoesntExist": {
         "enabled": true,
-        "createWithTemplate": false,
-        "template": ""
+        "createWithTemplate": true,
+        "template": "templates/capture.md"
       },
       "format": {
         "enabled": true,
@@ -119,8 +120,8 @@ Generate the QuickAdd config dynamically based on user selections. Here's an exa
       "captureToActiveFile": false,
       "createFileIfItDoesntExist": {
         "enabled": true,
-        "createWithTemplate": false,
-        "template": ""
+        "createWithTemplate": true,
+        "template": "templates/capture.md"
       },
       "format": {
         "enabled": true,
@@ -193,5 +194,16 @@ Add entries to `hotkeys.json` for each QuickAdd choice:
 ## Template Creation
 
 For each Template-type choice, create a corresponding template in the `templates/` folder. See the [assets/templates](assets/templates) folder for starter templates that can be copied to the vault.
+
+**Important:** All templates must include YAML frontmatter with `created: '[[YYYY-MM-DD]]'` format for enzyme compatibility:
+
+```yaml
+---
+tags:
+created: '[[<% tp.date.now("YYYY-MM-DD") %>]]'
+---
+```
+
+The `capture.md` template provides minimal frontmatter for files created by QuickAdd capture choices. This ensures all files have proper metadata for enzyme indexing.
 
 Document the configured hotkeys in the Getting Started guide so users know their shortcuts immediately.
